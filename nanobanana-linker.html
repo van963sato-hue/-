@@ -193,6 +193,52 @@
             background: #eff6ff;
             font-weight: 600;
         }
+
+        /* Accordion (V5) */
+        .accordion {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .accordion-header {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+        }
+
+        .accordion-header .icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.collapsed .icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 1.5rem;
+            background: white;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-content.collapsed {
+            max-height: 0;
+            padding: 0 1.5rem;
+        }
     </style>
 </head>
 <body class="app-gradient min-h-screen">
@@ -243,47 +289,137 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Builder Section -->
-                    <div class="lg:col-span-2 space-y-6">
-                        <!-- Who? Character Selection -->
-                        <div class="card p-6">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">👤 Who? （キャラクター）</h2>
-                            <div id="character-selector" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                                <div class="text-center text-gray-400 col-span-full py-8">
-                                    キャラクターを登録してください
+                    <div class="lg:col-span-2 space-y-4">
+                        <!-- Accordion 1: Character Settings -->
+                        <div class="accordion">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>👤 キャラクター設定</span>
+                                <span class="icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div id="character-selector" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                    <div class="text-center text-gray-400 col-span-full py-8">
+                                        キャラクターを登録してください
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Where? Situation Selection -->
-                        <div class="card p-6">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">📍 Where? （場所）</h2>
-                            <div id="situation-selector" class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                <button class="situation-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">
-                                    指定なし
-                                </button>
+                        <!-- Accordion 2: Scene & Action Settings -->
+                        <div class="accordion">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>🎬 シーン・アクション設定</span>
+                                <span class="icon">▼</span>
+                            </div>
+                            <div class="accordion-content">
+                                <div class="space-y-6">
+                                    <!-- Where? Situation Selection -->
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800 mb-3">📍 Where? （場所）</h3>
+                                        <div id="situation-selector" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                            <button class="situation-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">
+                                                指定なし
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Doing What? Action Selection -->
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800 mb-3">🎬 Doing What? （行動）</h3>
+                                        <div id="action-selector" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                                            <button class="action-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">
+                                                指定なし
+                                            </button>
+                                        </div>
+                                        <label class="block text-gray-700 font-semibold mb-2">フリー入力（日本語可）</label>
+                                        <textarea id="custom-action-input" rows="2" placeholder="例：丸々しているところ、祈っている、など"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                    </div>
+
+                                    <!-- Options (Duo Mode) -->
+                                    <div class="hidden" id="duo-options">
+                                        <h3 class="text-lg font-bold text-gray-800 mb-3">オプション</h3>
+                                        <label class="flex items-center space-x-3 cursor-pointer">
+                                            <input type="checkbox" id="auto-person-tags" checked class="w-5 h-5 rounded">
+                                            <span class="text-gray-700">人数タグを自動追加（2boys, multiple girlsなど）</span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Doing What? Action Selection -->
-                        <div class="card p-6">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">🎬 Doing What? （行動）</h2>
-                            <div id="action-selector" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-                                <button class="action-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">
-                                    指定なし
-                                </button>
+                        <!-- Accordion 3: Atmosphere Settings (V5) -->
+                        <div class="accordion">
+                            <div class="accordion-header" onclick="toggleAccordion(this)">
+                                <span>🎨 画作り設定（Style, Color, Layout）</span>
+                                <span class="icon">▼</span>
                             </div>
-                            <label class="block text-gray-700 font-semibold mb-2">フリー入力（日本語可）</label>
-                            <textarea id="custom-action-input" rows="2" placeholder="例：丸々しているところ、祈っている、など"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                        </div>
+                            <div class="accordion-content">
+                                <div class="space-y-6">
+                                    <!-- Art Style -->
+                                    <div>
+                                        <label class="block text-gray-700 font-semibold mb-2">🖼️ アートスタイル</label>
+                                        <select id="art-style-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <option value="">指定なし</option>
+                                        </select>
+                                    </div>
 
-                        <!-- Options (Duo Mode) -->
-                        <div class="card p-6 hidden" id="duo-options">
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">オプション</h3>
-                            <label class="flex items-center space-x-3 cursor-pointer">
-                                <input type="checkbox" id="auto-person-tags" checked class="w-5 h-5 rounded">
-                                <span class="text-gray-700">人数タグを自動追加（2boys, multiple girlsなど）</span>
-                            </label>
+                                    <!-- Color Palette -->
+                                    <div>
+                                        <label class="block text-gray-700 font-semibold mb-3">🎨 カラー設定</label>
+                                        <div class="space-y-3">
+                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                                <label class="flex items-center space-x-2">
+                                                    <input type="radio" name="color-mode" value="none" checked>
+                                                    <span class="text-sm">指定なし</span>
+                                                </label>
+                                                <label class="flex items-center space-x-2">
+                                                    <input type="radio" name="color-mode" value="monotone">
+                                                    <span class="text-sm">Monotone</span>
+                                                </label>
+                                                <label class="flex items-center space-x-2">
+                                                    <input type="radio" name="color-mode" value="two-tone">
+                                                    <span class="text-sm">Two-tone</span>
+                                                </label>
+                                                <label class="flex items-center space-x-2">
+                                                    <input type="radio" name="color-mode" value="background">
+                                                    <span class="text-sm">Background</span>
+                                                </label>
+                                                <label class="flex items-center space-x-2">
+                                                    <input type="radio" name="color-mode" value="theme">
+                                                    <span class="text-sm">Theme Color</span>
+                                                </label>
+                                            </div>
+
+                                            <div id="color-picker-container" class="space-y-2">
+                                                <div class="flex items-center space-x-3">
+                                                    <label class="text-sm font-semibold w-24">Color 1:</label>
+                                                    <input type="color" id="color-1" value="#FF0000" class="w-16 h-10 rounded border-2 border-gray-300">
+                                                    <span id="color-1-hex" class="text-sm text-gray-600">#FF0000</span>
+                                                </div>
+                                                <div class="flex items-center space-x-3 hidden" id="color-2-row">
+                                                    <label class="text-sm font-semibold w-24">Color 2:</label>
+                                                    <input type="color" id="color-2" value="#0000FF" class="w-16 h-10 rounded border-2 border-gray-300">
+                                                    <span id="color-2-hex" class="text-sm text-gray-600">#0000FF</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Aspect Ratio -->
+                                    <div>
+                                        <label class="block text-gray-700 font-semibold mb-2">📐 アスペクト比</label>
+                                        <select id="aspect-ratio-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <option value="">指定なし</option>
+                                            <option value="1:1">1:1 (Square)</option>
+                                            <option value="3:4">3:4 (Portrait)</option>
+                                            <option value="4:3">4:3 (Landscape)</option>
+                                            <option value="16:9">16:9 (Wide)</option>
+                                            <option value="9:16">9:16 (Vertical)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -507,7 +643,51 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Style Management (V5) -->
+                <div class="card p-6 mt-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">🎨 アートスタイル管理</h2>
+                        <button id="add-style-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                            ➕ スタイル追加
+                        </button>
+                    </div>
+
+                    <div id="style-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Style Modal (V5) -->
+    <div id="style-modal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800" id="style-modal-title">スタイル登録</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+
+            <form id="style-form" class="space-y-4">
+                <input type="hidden" id="style-id">
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">スタイル名 (Name)</label>
+                    <input type="text" id="style-name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：アニメ風、油絵調">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">プロンプト (Prompt)</label>
+                    <textarea id="style-prompt" rows="4" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：anime style, vibrant colors, cel shading"></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
+                    💾 保存
+                </button>
+            </form>
         </div>
     </div>
 
@@ -778,7 +958,7 @@
     <script>
         // ===== IndexedDB Setup =====
         const DB_NAME = 'NanobananaLinkerDB';
-        const DB_VERSION = 3;
+        const DB_VERSION = 4; // V5: Added Styles store
         let db;
 
         function initDB() {
@@ -824,6 +1004,12 @@
                         const pageStore = db.createObjectStore('pages', { keyPath: 'id', autoIncrement: true });
                         pageStore.createIndex('projectId', 'projectId', { unique: false });
                         pageStore.createIndex('order', 'order', { unique: false });
+                    }
+
+                    // Styles Store (V5)
+                    if (!db.objectStoreNames.contains('styles')) {
+                        const styleStore = db.createObjectStore('styles', { keyPath: 'id', autoIncrement: true });
+                        styleStore.createIndex('name', 'name', { unique: false });
                     }
 
                     // Settings Store
@@ -962,6 +1148,51 @@
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['actions'], 'readonly');
                 const store = transaction.objectStore('actions');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ===== Style Operations (V5) =====
+        function addStyle(style) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['styles'], 'readwrite');
+                const store = transaction.objectStore('styles');
+                const request = store.add(style);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateStyle(style) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['styles'], 'readwrite');
+                const store = transaction.objectStore('styles');
+                const request = store.put(style);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteStyle(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['styles'], 'readwrite');
+                const store = transaction.objectStore('styles');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllStyles() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['styles'], 'readonly');
+                const store = transaction.objectStore('styles');
                 const request = store.getAll();
 
                 request.onsuccess = () => resolve(request.result);
@@ -1508,6 +1739,48 @@
                 sections.push(sceneSection);
             }
 
+            // V5: Atmosphere Settings
+            const atmosphereParts = [];
+
+            // Art Style
+            const styleSelector = document.getElementById('art-style-selector');
+            if (styleSelector && styleSelector.value) {
+                const selectedStyleObj = styles.find(s => s.id == styleSelector.value);
+                if (selectedStyleObj) {
+                    atmosphereParts.push(selectedStyleObj.prompt);
+                }
+            }
+
+            // Color Mode
+            const colorMode = document.querySelector('input[name="color-mode"]:checked')?.value;
+            if (colorMode && colorMode !== 'none') {
+                const color1 = document.getElementById('color-1')?.value || '#FF0000';
+                const colorName1 = hexToColorName(color1);
+
+                if (colorMode === 'monotone') {
+                    atmosphereParts.push(`monotone, ${colorName1} theme`);
+                } else if (colorMode === 'two-tone') {
+                    const color2 = document.getElementById('color-2')?.value || '#0000FF';
+                    const colorName2 = hexToColorName(color2);
+                    atmosphereParts.push(`two-tone, ${colorName1} and ${colorName2}`);
+                } else if (colorMode === 'background') {
+                    atmosphereParts.push(`${colorName1} background`);
+                } else if (colorMode === 'theme') {
+                    atmosphereParts.push(`theme color is ${color1}`);
+                }
+            }
+
+            // Aspect Ratio
+            const aspectRatio = document.getElementById('aspect-ratio-selector')?.value;
+            if (aspectRatio) {
+                atmosphereParts.push(`aspect ratio ${aspectRatio}`);
+            }
+
+            if (atmosphereParts.length > 0) {
+                const atmosphereSection = `[Atmosphere]\n${atmosphereParts.join(', ')}`;
+                sections.push(atmosphereSection);
+            }
+
             // Combine all sections with double line breaks
             let positivePrompt = sections.filter(s => s.trim()).join(',\n\n');
 
@@ -1905,6 +2178,84 @@
             await deleteAction(id);
             loadActionList();
             renderActionSelector();
+        }
+
+        // ===== Style Management (V5) =====
+        let editingStyleId = null;
+
+        async function loadStyleList() {
+            const styles = await getAllStyles();
+            const container = document.getElementById('style-list');
+
+            if (styles.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">スタイルが登録されていません</div>';
+                return;
+            }
+
+            container.innerHTML = styles.map(style => `
+                <div class="card p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-gray-800">${style.name}</h3>
+                        <div class="space-x-2">
+                            <button class="edit-style text-blue-500 hover:text-blue-700" data-id="${style.id}">✏️</button>
+                            <button class="delete-style text-red-500 hover:text-red-700" data-id="${style.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">${style.prompt}</p>
+                </div>
+            `).join('');
+        }
+
+        function openStyleModal(styleId = null) {
+            editingStyleId = styleId;
+            const modal = document.getElementById('style-modal');
+            const title = document.getElementById('style-modal-title');
+
+            if (styleId) {
+                title.textContent = 'スタイル編集';
+                getAllStyles().then(styles => {
+                    const style = styles.find(s => s.id === styleId);
+                    if (style) {
+                        document.getElementById('style-id').value = style.id;
+                        document.getElementById('style-name').value = style.name;
+                        document.getElementById('style-prompt').value = style.prompt;
+                    }
+                });
+            } else {
+                title.textContent = 'スタイル登録';
+                document.getElementById('style-form').reset();
+                document.getElementById('style-id').value = '';
+            }
+
+            modal.classList.add('show');
+        }
+
+        async function saveStyle(event) {
+            event.preventDefault();
+
+            const styleData = {
+                name: document.getElementById('style-name').value,
+                prompt: document.getElementById('style-prompt').value
+            };
+
+            if (editingStyleId) {
+                styleData.id = editingStyleId;
+                await updateStyle(styleData);
+            } else {
+                await addStyle(styleData);
+            }
+
+            closeModal();
+            loadStyleList();
+            loadStyleSelector();
+        }
+
+        async function deleteStyleConfirm(id) {
+            if (!confirm('このスタイルを削除しますか？')) return;
+
+            await deleteStyle(id);
+            loadStyleList();
+            loadStyleSelector();
         }
 
         // ===== Project Management (V3) =====
@@ -2318,6 +2669,69 @@
             input.click();
         }
 
+        // ===== Accordion Functions (V5) =====
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.icon');
+
+            // Toggle collapsed class
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        // ===== V5 Atmosphere Functions =====
+        let selectedStyle = null;
+        let styles = [];
+
+        async function loadStyleSelector() {
+            styles = await getAllStyles();
+            const selector = document.getElementById('art-style-selector');
+
+            selector.innerHTML = '<option value="">指定なし</option>';
+            styles.forEach(style => {
+                const option = document.createElement('option');
+                option.value = style.id;
+                option.textContent = style.name;
+                selector.appendChild(option);
+            });
+        }
+
+        function updateColorMode() {
+            const mode = document.querySelector('input[name="color-mode"]:checked')?.value;
+            const color2Row = document.getElementById('color-2-row');
+            const colorPickerContainer = document.getElementById('color-picker-container');
+
+            if (mode === 'two-tone') {
+                color2Row.classList.remove('hidden');
+            } else {
+                color2Row.classList.add('hidden');
+            }
+
+            if (mode === 'none') {
+                colorPickerContainer.classList.add('hidden');
+            } else {
+                colorPickerContainer.classList.remove('hidden');
+            }
+        }
+
+        function updateColorHex(colorInputId, hexSpanId) {
+            const colorInput = document.getElementById(colorInputId);
+            const hexSpan = document.getElementById(hexSpanId);
+            hexSpan.textContent = colorInput.value.toUpperCase();
+        }
+
+        function hexToColorName(hex) {
+            // Simple color name mapping for common colors
+            const colorMap = {
+                '#FF0000': 'red', '#00FF00': 'green', '#0000FF': 'blue',
+                '#FFFF00': 'yellow', '#FF00FF': 'magenta', '#00FFFF': 'cyan',
+                '#000000': 'black', '#FFFFFF': 'white', '#808080': 'gray',
+                '#FFA500': 'orange', '#800080': 'purple', '#FFC0CB': 'pink',
+                '#A52A2A': 'brown', '#FFD700': 'gold', '#C0C0C0': 'silver'
+            };
+            return colorMap[hex.toUpperCase()] || hex;
+        }
+
         // ===== Event Listeners (V2) =====
         document.addEventListener('DOMContentLoaded', async () => {
             await initDB();
@@ -2370,6 +2784,28 @@
             // V4 controls
             document.getElementById('output-format')?.addEventListener('change', updatePromptPreview);
             document.getElementById('strict-source-mode')?.addEventListener('change', updatePromptPreview);
+
+            // V5 controls
+            document.getElementById('art-style-selector')?.addEventListener('change', updatePromptPreview);
+            document.getElementById('aspect-ratio-selector')?.addEventListener('change', updatePromptPreview);
+
+            // Color mode radio buttons
+            document.querySelectorAll('input[name="color-mode"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    updateColorMode();
+                    updatePromptPreview();
+                });
+            });
+
+            // Color pickers
+            document.getElementById('color-1')?.addEventListener('input', (e) => {
+                updateColorHex('color-1', 'color-1-hex');
+                updatePromptPreview();
+            });
+            document.getElementById('color-2')?.addEventListener('input', (e) => {
+                updateColorHex('color-2', 'color-2-hex');
+                updatePromptPreview();
+            });
 
             // Copy & Save
             document.getElementById('copy-prompt-btn').addEventListener('click', copyPrompt);
@@ -2437,6 +2873,20 @@
 
             // Action Form (V2)
             document.getElementById('action-form').addEventListener('submit', saveAction);
+
+            // Style DB (V5)
+            document.getElementById('add-style-btn').addEventListener('click', () => openStyleModal());
+
+            document.getElementById('style-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-style')) {
+                    openStyleModal(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('delete-style')) {
+                    deleteStyleConfirm(parseInt(e.target.dataset.id));
+                }
+            });
+
+            // Style Form (V5)
+            document.getElementById('style-form').addEventListener('submit', saveStyle);
 
             // Story Mode (V3)
             document.getElementById('add-project-btn').addEventListener('click', () => openProjectModal());
@@ -2515,6 +2965,11 @@
             // Initialize (V2)
             await renderGeneratorHub();
             loadSettings();
+
+            // Initialize V5
+            await loadStyleSelector();
+            await loadStyleList();
+            updateColorMode(); // Initialize color picker visibility
         });
 
         // ===== PWA Service Worker =====
