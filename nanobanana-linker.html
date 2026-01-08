@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#3b82f6">
+    <title>Nanobanana Linker - AI Prompt Manager</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTmFub2JhbmFuYSBMaW5rZXIiLCJzaG9ydF9uYW1lIjoiTmFub2JhbmFuYSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzNiODJmNiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE1qZ2dNVEk0SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWdabWxzYkQwaUl6TmlPREptTmlJdlBqeDBaWGgwSUhnOUlqWTBJaUI1UFNJMk5DSWdabWxzYkQwaUl6Wm1abVptWmlJZ1ptOXVkQzF6YVhwbFBTSTBPQ0lnWm05dWRDMW1ZVzFwYkhrOUlsWmxjbVJoYm1FaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQa000UEM5MFpYaDBQand2YzNablBnPT0iLCJzaXplcyI6IjEyOHgxMjgiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9LHsic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQXhNamd4TWpnaVBqeHlaV04wSUhkcFpIUm9QU0l4TWpnaUlHaGxhV2RvZEQwaU1USTRJaUJtYVd4c1BTSWpNMkk0TW1ZMklpOCtQSFJsZUhRZ2VEMGlOalFpSUhrOUlqWTBJaUJtYVd4c1BTSWpObVptWm1abUlpQm1iMjUwTFhOcGVtVTlJalE0SWlCbWIyNTBMV1poYldsc2VUMGlWbVZ5WkdGdVlTSWdkR1Y0ZEMxaGJtTm9iM0k5SW0xcFpHUnNaU0krUXpnOEwzUmxlSFErUEM5emRtYysiLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Verdana', sans-serif;
+        }
+
+        .app-gradient {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .character-slot {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .character-slot.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .image-preview:hover {
+            transform: scale(1.1);
+        }
+
+        .tab-button {
+            position: relative;
+            padding: 12px 24px;
+            color: #64748b;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            color: #3b82f6;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input[type="checkbox"]:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="app-gradient min-h-screen">
+    <!-- Main Container -->
+    <div id="app" class="container mx-auto px-4 py-6 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-8 fade-in">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">🍌 Nanobanana Linker</h1>
+            <p class="text-gray-600">AI画像生成プロンプト管理ツール</p>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="card mb-6 overflow-hidden">
+            <div class="flex border-b">
+                <button class="tab-button active flex-1" data-tab="generator">
+                    <span class="text-lg">🎨</span> Generator Hub
+                </button>
+                <button class="tab-button flex-1" data-tab="database">
+                    <span class="text-lg">👥</span> Character DB
+                </button>
+                <button class="tab-button flex-1" data-tab="settings">
+                    <span class="text-lg">⚙️</span> Settings
+                </button>
+            </div>
+        </nav>
+
+        <!-- Tab Content -->
+        <div id="tab-content">
+            <!-- Generator Hub Tab -->
+            <div id="generator-tab" class="tab-content fade-in">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Character Slots -->
+                    <div class="lg:col-span-2">
+                        <div class="card p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-gray-800">キャラクター選択</h2>
+                                <button id="add-slot-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                                    ➕ スロット追加
+                                </button>
+                            </div>
+                            <div id="character-slots" class="space-y-4"></div>
+                        </div>
+                    </div>
+
+                    <!-- Reference Images & Actions -->
+                    <div class="space-y-6">
+                        <!-- Reference Images -->
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">参考画像</h3>
+                            <div id="reference-images" class="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto scrollbar-thin">
+                                <div class="text-center text-gray-400 col-span-3 py-8">
+                                    キャラを選択してください
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="card p-6 space-y-3">
+                            <button id="copy-prompt-btn" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
+                                📋 プロンプトをコピー
+                            </button>
+                            <button id="save-images-btn" class="bg-green-500 hover:bg-green-600 w-full text-white px-6 py-3 rounded-lg font-semibold transition">
+                                💾 画像を保存
+                            </button>
+                        </div>
+
+                        <!-- Quality Presets -->
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">品質設定</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" id="quality-positive-toggle" checked class="w-5 h-5 rounded">
+                                    <span class="text-gray-700">高画質化タグ (Positive)</span>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" id="quality-negative-toggle" checked class="w-5 h-5 rounded">
+                                    <span class="text-gray-700">ネガティブタグ (Negative)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Character DB Tab -->
+            <div id="database-tab" class="tab-content hidden">
+                <div class="card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">キャラクターデータベース</h2>
+                        <div class="space-x-2">
+                            <button id="import-json-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition">
+                                📥 Import JSON
+                            </button>
+                            <button id="export-json-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition">
+                                📤 Export JSON
+                            </button>
+                            <button id="add-character-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                                ➕ 新規登録
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="character-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content hidden">
+                <div class="card p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">品質プリセット設定</h2>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">高画質化タグ (Positive)</label>
+                            <textarea id="positive-preset" rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="masterpiece, best quality, ultra detailed..."></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">ネガティブタグ (Negative)</label>
+                            <textarea id="negative-preset" rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="low quality, blurry, bad anatomy..."></textarea>
+                        </div>
+
+                        <button id="save-presets-btn" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold">
+                            💾 保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Character Edit Modal -->
+    <div id="character-modal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto scrollbar-thin">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800" id="modal-title">キャラクター登録</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+
+            <form id="character-form" class="space-y-4">
+                <input type="hidden" id="character-id">
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">名前 (Name)</label>
+                    <input type="text" id="character-name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">呼び出しタグ (Trigger Words)</label>
+                    <input type="text" id="character-trigger" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="character_name, specific_tag">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">外見プロンプト (Appearance)</label>
+                    <textarea id="character-appearance" rows="4" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="long hair, blue eyes, school uniform..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">参考画像（複数選択可）</label>
+                    <input type="file" id="character-images" multiple accept="image/*"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    <div id="image-preview-container" class="grid grid-cols-4 gap-2 mt-3"></div>
+                </div>
+
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="btn-primary flex-1 text-white px-6 py-3 rounded-lg font-semibold">
+                        💾 保存
+                    </button>
+                    <button type="button" class="close-modal bg-gray-300 hover:bg-gray-400 flex-1 text-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                        キャンセル
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div id="image-viewer-modal" class="modal">
+        <div class="relative max-w-4xl mx-4">
+            <button class="close-modal absolute top-4 right-4 bg-white rounded-full w-10 h-10 flex items-center justify-center text-2xl hover:bg-gray-100">
+                ✕
+            </button>
+            <img id="viewer-image" src="" alt="" class="max-w-full max-h-[90vh] rounded-lg">
+        </div>
+    </div>
+
+    <script>
+        // ===== IndexedDB Setup =====
+        const DB_NAME = 'NanobananaLinkerDB';
+        const DB_VERSION = 1;
+        let db;
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+
+                    // Characters Store
+                    if (!db.objectStoreNames.contains('characters')) {
+                        const characterStore = db.createObjectStore('characters', { keyPath: 'id', autoIncrement: true });
+                        characterStore.createIndex('name', 'name', { unique: false });
+                    }
+
+                    // Settings Store
+                    if (!db.objectStoreNames.contains('settings')) {
+                        db.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                };
+            });
+        }
+
+        // ===== Database Operations =====
+        function addCharacter(character) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['characters'], 'readwrite');
+                const store = transaction.objectStore('characters');
+                const request = store.add(character);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateCharacter(character) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['characters'], 'readwrite');
+                const store = transaction.objectStore('characters');
+                const request = store.put(character);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteCharacter(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['characters'], 'readwrite');
+                const store = transaction.objectStore('characters');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllCharacters() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['characters'], 'readonly');
+                const store = transaction.objectStore('characters');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function saveSetting(key, value) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['settings'], 'readwrite');
+                const store = transaction.objectStore('settings');
+                const request = store.put({ key, value });
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getSetting(key, defaultValue = '') {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['settings'], 'readonly');
+                const store = transaction.objectStore('settings');
+                const request = store.get(key);
+
+                request.onsuccess = () => {
+                    resolve(request.result ? request.result.value : defaultValue);
+                };
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ===== UI State =====
+        let currentTab = 'generator';
+        let characterSlots = [null];
+        let selectedImages = [];
+        let editingCharacterId = null;
+
+        // ===== Tab Navigation =====
+        function switchTab(tabName) {
+            currentTab = tabName;
+
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabName);
+            });
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+
+            // Load data for specific tabs
+            if (tabName === 'database') {
+                loadCharacterList();
+            } else if (tabName === 'settings') {
+                loadSettings();
+            }
+        }
+
+        // ===== Character Slots =====
+        function renderCharacterSlots() {
+            const container = document.getElementById('character-slots');
+            container.innerHTML = '';
+
+            characterSlots.forEach((character, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'character-slot p-4 ' + (character ? 'active' : '');
+
+                slot.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">スロット ${index + 1}</label>
+                            <select class="character-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" data-index="${index}">
+                                <option value="">-- キャラクターを選択 --</option>
+                            </select>
+                        </div>
+                        ${index > 0 ? `<button class="remove-slot ml-4 text-red-500 hover:text-red-700 text-xl" data-index="${index}">🗑️</button>` : ''}
+                    </div>
+                `;
+
+                container.appendChild(slot);
+            });
+
+            // Populate select options
+            getAllCharacters().then(characters => {
+                document.querySelectorAll('.character-select').forEach((select, index) => {
+                    characters.forEach(char => {
+                        const option = document.createElement('option');
+                        option.value = char.id;
+                        option.textContent = char.name;
+                        if (characterSlots[index] && characterSlots[index].id === char.id) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                });
+            });
+
+            updateReferenceImages();
+        }
+
+        function addCharacterSlot() {
+            if (characterSlots.length >= 10) {
+                alert('最大10スロットまでです');
+                return;
+            }
+            characterSlots.push(null);
+            renderCharacterSlots();
+        }
+
+        function removeCharacterSlot(index) {
+            characterSlots.splice(index, 1);
+            renderCharacterSlots();
+        }
+
+        function selectCharacter(index, characterId) {
+            if (!characterId) {
+                characterSlots[index] = null;
+                updateReferenceImages();
+                return;
+            }
+
+            getAllCharacters().then(characters => {
+                const character = characters.find(c => c.id === parseInt(characterId));
+                characterSlots[index] = character || null;
+                updateReferenceImages();
+            });
+        }
+
+        function updateReferenceImages() {
+            const container = document.getElementById('reference-images');
+            const allImages = [];
+
+            characterSlots.forEach(char => {
+                if (char && char.images) {
+                    allImages.push(...char.images.map(img => ({ char: char.name, data: img })));
+                }
+            });
+
+            if (allImages.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 col-span-3 py-8">キャラを選択してください</div>';
+                return;
+            }
+
+            container.innerHTML = allImages.slice(0, 10).map((img, index) => `
+                <div class="relative group">
+                    <img src="${img.data}" alt="${img.char}" class="image-preview" data-index="${index}">
+                    <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white text-xs p-1 text-center opacity-0 group-hover:opacity-100 transition">
+                        ${img.char}
+                    </div>
+                </div>
+            `).join('');
+
+            selectedImages = allImages;
+        }
+
+        // ===== Prompt Generation =====
+        async function generatePrompt() {
+            const includePositive = document.getElementById('quality-positive-toggle').checked;
+            const includeNegative = document.getElementById('quality-negative-toggle').checked;
+
+            const positivePreset = includePositive ? await getSetting('positivePreset', '') : '';
+            const negativePreset = includeNegative ? await getSetting('negativePreset', '') : '';
+
+            const characterPrompts = characterSlots
+                .filter(char => char !== null)
+                .map(char => `${char.trigger}, ${char.appearance}`)
+                .join(', ');
+
+            const positivePrompt = [positivePreset, characterPrompts]
+                .filter(p => p.trim())
+                .join(', ');
+
+            const fullPrompt = negativePreset
+                ? `${positivePrompt}\nNegative prompt: ${negativePreset}`
+                : positivePrompt;
+
+            return fullPrompt;
+        }
+
+        async function copyPrompt() {
+            try {
+                const prompt = await generatePrompt();
+
+                if (!prompt.trim()) {
+                    alert('プロンプトが空です。キャラクターを選択してください。');
+                    return;
+                }
+
+                await navigator.clipboard.writeText(prompt);
+
+                const btn = document.getElementById('copy-prompt-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ コピーしました！';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            } catch (err) {
+                alert('クリップボードへのコピーに失敗しました');
+            }
+        }
+
+        function saveImages() {
+            if (selectedImages.length === 0) {
+                alert('保存する画像がありません');
+                return;
+            }
+
+            selectedImages.forEach((img, index) => {
+                const link = document.createElement('a');
+                link.href = img.data;
+                link.download = `${img.char}_${index + 1}.png`;
+                link.click();
+            });
+        }
+
+        // ===== Character List =====
+        async function loadCharacterList() {
+            const characters = await getAllCharacters();
+            const container = document.getElementById('character-list');
+
+            if (characters.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">キャラクターが登録されていません</div>';
+                return;
+            }
+
+            container.innerHTML = characters.map(char => `
+                <div class="card p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-gray-800">${char.name}</h3>
+                        <div class="space-x-2">
+                            <button class="edit-character text-blue-500 hover:text-blue-700" data-id="${char.id}">✏️</button>
+                            <button class="delete-character text-red-500 hover:text-red-700" data-id="${char.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2"><strong>タグ:</strong> ${char.trigger}</p>
+                    <p class="text-sm text-gray-600 mb-3 line-clamp-2">${char.appearance}</p>
+                    ${char.images && char.images.length > 0 ? `
+                        <div class="flex gap-2 overflow-x-auto">
+                            ${char.images.slice(0, 3).map(img => `
+                                <img src="${img}" alt="${char.name}" class="w-16 h-16 object-cover rounded">
+                            `).join('')}
+                            ${char.images.length > 3 ? `<div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-sm text-gray-600">+${char.images.length - 3}</div>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // ===== Character Form =====
+        function openCharacterModal(characterId = null) {
+            editingCharacterId = characterId;
+            const modal = document.getElementById('character-modal');
+            const form = document.getElementById('character-form');
+            const title = document.getElementById('modal-title');
+
+            if (characterId) {
+                title.textContent = 'キャラクター編集';
+                getAllCharacters().then(characters => {
+                    const character = characters.find(c => c.id === characterId);
+                    if (character) {
+                        document.getElementById('character-id').value = character.id;
+                        document.getElementById('character-name').value = character.name;
+                        document.getElementById('character-trigger').value = character.trigger;
+                        document.getElementById('character-appearance').value = character.appearance;
+
+                        const previewContainer = document.getElementById('image-preview-container');
+                        if (character.images && character.images.length > 0) {
+                            previewContainer.innerHTML = character.images.map((img, index) => `
+                                <div class="relative">
+                                    <img src="${img}" class="w-full h-20 object-cover rounded">
+                                    <button type="button" class="remove-preview-image absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 text-xs" data-index="${index}">✕</button>
+                                </div>
+                            `).join('');
+                        }
+                    }
+                });
+            } else {
+                title.textContent = 'キャラクター登録';
+                form.reset();
+                document.getElementById('character-id').value = '';
+                document.getElementById('image-preview-container').innerHTML = '';
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('show');
+            });
+            editingCharacterId = null;
+        }
+
+        async function handleImageSelection(files) {
+            const previewContainer = document.getElementById('image-preview-container');
+            const existingPreviews = previewContainer.querySelectorAll('img').length;
+
+            for (let i = 0; i < files.length; i++) {
+                if (existingPreviews + i >= 10) {
+                    alert('画像は最大10枚まで登録できます');
+                    break;
+                }
+
+                const file = files[i];
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    const preview = document.createElement('div');
+                    preview.className = 'relative';
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" class="w-full h-20 object-cover rounded">
+                        <button type="button" class="remove-preview-image absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 text-xs">✕</button>
+                    `;
+                    previewContainer.appendChild(preview);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function saveCharacter(event) {
+            event.preventDefault();
+
+            const characterData = {
+                name: document.getElementById('character-name').value,
+                trigger: document.getElementById('character-trigger').value,
+                appearance: document.getElementById('character-appearance').value,
+                images: Array.from(document.getElementById('image-preview-container').querySelectorAll('img'))
+                    .map(img => img.src)
+            };
+
+            if (editingCharacterId) {
+                characterData.id = editingCharacterId;
+                await updateCharacter(characterData);
+            } else {
+                await addCharacter(characterData);
+            }
+
+            closeModal();
+            loadCharacterList();
+            renderCharacterSlots();
+        }
+
+        async function deleteCharacterConfirm(id) {
+            if (!confirm('このキャラクターを削除しますか？')) return;
+
+            await deleteCharacter(id);
+            loadCharacterList();
+            renderCharacterSlots();
+        }
+
+        // ===== Settings =====
+        async function loadSettings() {
+            const positivePreset = await getSetting('positivePreset', 'masterpiece, best quality, ultra detailed, 8k resolution');
+            const negativePreset = await getSetting('negativePreset', 'low quality, worst quality, blurry, bad anatomy, watermark');
+
+            document.getElementById('positive-preset').value = positivePreset;
+            document.getElementById('negative-preset').value = negativePreset;
+        }
+
+        async function saveSettings() {
+            const positivePreset = document.getElementById('positive-preset').value;
+            const negativePreset = document.getElementById('negative-preset').value;
+
+            await saveSetting('positivePreset', positivePreset);
+            await saveSetting('negativePreset', negativePreset);
+
+            const btn = document.getElementById('save-presets-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✅ 保存しました！';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        }
+
+        // ===== Import/Export =====
+        async function exportJSON() {
+            const characters = await getAllCharacters();
+            const positivePreset = await getSetting('positivePreset', '');
+            const negativePreset = await getSetting('negativePreset', '');
+
+            const data = {
+                version: 1,
+                characters,
+                settings: {
+                    positivePreset,
+                    negativePreset
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `nanobanana-backup-${Date.now()}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importJSON() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+
+                    if (!data.version || !data.characters) {
+                        throw new Error('Invalid JSON format');
+                    }
+
+                    if (!confirm(`${data.characters.length}件のキャラクターをインポートします。よろしいですか？`)) {
+                        return;
+                    }
+
+                    // Clear existing data
+                    const characters = await getAllCharacters();
+                    for (const char of characters) {
+                        await deleteCharacter(char.id);
+                    }
+
+                    // Import characters
+                    for (const char of data.characters) {
+                        delete char.id; // Remove ID to create new entries
+                        await addCharacter(char);
+                    }
+
+                    // Import settings
+                    if (data.settings) {
+                        await saveSetting('positivePreset', data.settings.positivePreset || '');
+                        await saveSetting('negativePreset', data.settings.negativePreset || '');
+                    }
+
+                    alert('インポートが完了しました');
+                    loadCharacterList();
+                    renderCharacterSlots();
+                } catch (err) {
+                    alert('インポートに失敗しました: ' + err.message);
+                }
+            };
+
+            input.click();
+        }
+
+        // ===== Event Listeners =====
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initDB();
+
+            // Tab navigation
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+            });
+
+            // Generator Hub
+            document.getElementById('add-slot-btn').addEventListener('click', addCharacterSlot);
+            document.getElementById('copy-prompt-btn').addEventListener('click', copyPrompt);
+            document.getElementById('save-images-btn').addEventListener('click', saveImages);
+
+            document.getElementById('character-slots').addEventListener('change', (e) => {
+                if (e.target.classList.contains('character-select')) {
+                    selectCharacter(parseInt(e.target.dataset.index), e.target.value);
+                }
+            });
+
+            document.getElementById('character-slots').addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-slot')) {
+                    removeCharacterSlot(parseInt(e.target.dataset.index));
+                }
+            });
+
+            document.getElementById('reference-images').addEventListener('click', (e) => {
+                if (e.target.classList.contains('image-preview')) {
+                    const index = parseInt(e.target.dataset.index);
+                    const modal = document.getElementById('image-viewer-modal');
+                    document.getElementById('viewer-image').src = selectedImages[index].data;
+                    modal.classList.add('show');
+                }
+            });
+
+            // Character DB
+            document.getElementById('add-character-btn').addEventListener('click', () => openCharacterModal());
+            document.getElementById('import-json-btn').addEventListener('click', importJSON);
+            document.getElementById('export-json-btn').addEventListener('click', exportJSON);
+
+            document.getElementById('character-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-character')) {
+                    openCharacterModal(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('delete-character')) {
+                    deleteCharacterConfirm(parseInt(e.target.dataset.id));
+                }
+            });
+
+            // Character Form
+            document.getElementById('character-form').addEventListener('submit', saveCharacter);
+            document.getElementById('character-images').addEventListener('change', (e) => {
+                handleImageSelection(e.target.files);
+            });
+
+            document.getElementById('image-preview-container').addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-preview-image')) {
+                    e.target.parentElement.remove();
+                }
+            });
+
+            // Settings
+            document.getElementById('save-presets-btn').addEventListener('click', saveSettings);
+
+            // Modal close
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', closeModal);
+            });
+
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal();
+                });
+            });
+
+            // Initialize
+            renderCharacterSlots();
+            loadSettings();
+        });
+
+        // ===== PWA Service Worker =====
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    self.addEventListener('install', (event) => {
+                        self.skipWaiting();
+                    });
+
+                    self.addEventListener('activate', (event) => {
+                        event.waitUntil(clients.claim());
+                    });
+
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request).then((response) => {
+                                return response || fetch(event.request);
+                            })
+                        );
+                    });
+                `;
+
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+
+                navigator.serviceWorker.register(swUrl).then(() => {
+                    console.log('Service Worker registered');
+                }).catch((err) => {
+                    console.error('Service Worker registration failed:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
