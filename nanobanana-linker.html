@@ -305,6 +305,11 @@
                             </div>
                         </div>
 
+                        <!-- V8: Per-Character Advanced Settings -->
+                        <div id="per-character-advanced-settings" class="space-y-4">
+                            <!-- Dynamically populated when characters are selected -->
+                        </div>
+
                         <!-- Accordion 2: Scene & Props (V6) -->
                         <div class="accordion">
                             <div class="accordion-header" onclick="toggleAccordion(this)">
@@ -472,93 +477,6 @@
                             </div>
                         </div>
 
-                        <!-- Accordion 4: Advanced Settings (V7) -->
-                        <div class="accordion">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <span>⚙️ Advanced Settings （構図・視線・状態・年齢）</span>
-                                <span class="icon">▼</span>
-                            </div>
-                            <div class="accordion-content collapsed">
-                                <div class="space-y-6">
-                                    <!-- Composition (V7) -->
-                                    <div>
-                                        <label class="block text-gray-700 font-semibold mb-3">📐 構図 (Composition)</label>
-                                        <select id="composition-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                            <option value="">指定なし</option>
-                                            <option value="face only">😶 顔だけ (Face Only)</option>
-                                            <option value="face focus, close-up">😀 顔アップ (Face Close-up)</option>
-                                            <option value="upper body, bust shot">👔 バストアップ (Bust Shot)</option>
-                                            <option value="upper body">🙋 上半身 (Upper Body)</option>
-                                            <option value="cowboy shot">🤠 太ももから上 (Cowboy Shot)</option>
-                                            <option value="full body">🧍 全身 (Full Body)</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Gaze Direction (V7) -->
-                                    <div>
-                                        <label class="block text-gray-700 font-semibold mb-3">👁️ 視線 (Gaze Direction)</label>
-                                        <select id="gaze-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                            <option value="">指定なし</option>
-                                            <option value="looking at viewer">📷 カメラ目線 (Looking at Viewer)</option>
-                                            <option value="looking up">🔺 上目遣い (Looking Up)</option>
-                                            <option value="looking down">🔻 見下ろす (Looking Down)</option>
-                                            <option value="looking away, averted eyes">↔️ 目を逸らす (Looking Away)</option>
-                                            <option value="looking back">🔙 後ろを見る (Looking Back)</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- State Options (V7) -->
-                                    <div>
-                                        <label class="block text-gray-700 font-semibold mb-3">💫 状態 (State)</label>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <label class="flex items-center space-x-2 p-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50">
-                                                <input type="checkbox" class="state-checkbox w-4 h-4" data-state="heavy breathing, panting">
-                                                <span class="text-sm">😮‍💨 息荒い</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 p-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50">
-                                                <input type="checkbox" class="state-checkbox w-4 h-4" data-state="blush, embarrassed">
-                                                <span class="text-sm">😊 赤面</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 p-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50">
-                                                <input type="checkbox" class="state-checkbox w-4 h-4" data-state="teary eyes, watery eyes">
-                                                <span class="text-sm">🥺 涙目</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 p-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50">
-                                                <input type="checkbox" class="state-checkbox w-4 h-4" data-state="fang, yaeba">
-                                                <span class="text-sm">😁 八重歯</span>
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <!-- Age Modifier (V7) -->
-                                    <div>
-                                        <label class="block text-gray-700 font-semibold mb-3">👶 年齢 (Age Modifier)</label>
-                                        <div class="space-y-2">
-                                            <label class="flex items-center space-x-2 cursor-pointer">
-                                                <input type="radio" name="age-modifier" value="toddler, very young" class="w-4 h-4">
-                                                <span class="text-sm">👶 幼児 (Toddler)</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 cursor-pointer">
-                                                <input type="radio" name="age-modifier" value="child, young" class="w-4 h-4">
-                                                <span class="text-sm">🧒 少年・少女 (Child)</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 cursor-pointer">
-                                                <input type="radio" name="age-modifier" value="" class="w-4 h-4" checked>
-                                                <span class="text-sm">🧑 青年 (Young Adult - Default)</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 cursor-pointer">
-                                                <input type="radio" name="age-modifier" value="middle-aged, mature" class="w-4 h-4">
-                                                <span class="text-sm">🧓 年配 (Middle-aged)</span>
-                                            </label>
-                                            <label class="flex items-center space-x-2 cursor-pointer">
-                                                <input type="radio" name="age-modifier" value="old, elderly" class="w-4 h-4">
-                                                <span class="text-sm">👴 老人 (Elderly)</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Preview & Actions Section -->
@@ -928,6 +846,56 @@
                             </label>
                         </div>
                     </div>
+
+                    <!-- V8: Physical Attributes -->
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">見た目年齢 (Apparent Age)</label>
+                            <input type="text" id="character-age"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                placeholder="例：16歳くらい、20代前半、child">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">身長 (Height)</label>
+                            <input type="text" id="character-height"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                placeholder="例：158cm、tall、short">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-semibold mb-2">骨格・体型 (Body Type)</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <label class="flex items-center p-2 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="body-type" value="slender, thin" class="mr-2">
+                                <span class="text-sm">🪶 線が細い (Slender)</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="body-type" value="chubby, plump" class="mr-2">
+                                <span class="text-sm">🍰 ぽっちゃり (Chubby)</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="body-type" value="skinny, very thin" class="mr-2">
+                                <span class="text-sm">🦴 ガリガリ (Skinny)</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="body-type" value="overweight, fat" class="mr-2">
+                                <span class="text-sm">🐻 おデブ (Overweight)</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="body-type" value="muscular, athletic" class="mr-2">
+                                <span class="text-sm">💪 筋肉質 (Muscular)</span>
+                            </label>
+                            <label class="flex items-center p-2 border rounded-lg cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="body-type" value="" class="mr-2" checked>
+                                <span class="text-sm">✏️ カスタム / 指定なし</span>
+                            </label>
+                        </div>
+                        <input type="text" id="custom-body-type"
+                            class="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            placeholder="カスタム体型タグ (例: petite, curvy, etc.)">
+                    </div>
                 </div>
 
                 <!-- Appearance Parts Section -->
@@ -1140,7 +1108,7 @@
     <script>
         // ===== IndexedDB Setup =====
         const DB_NAME = 'NanobananaLinkerDB';
-        const DB_VERSION = 5; // V6: Added Props store
+        const DB_VERSION = 6; // V8: Extended Character fields (age, height, bodyType)
         let db;
 
         function initDB() {
@@ -1577,6 +1545,10 @@
         let editingSituationId = null;
         let editingActionId = null;
 
+        // V8: Per-character advanced settings
+        // Structure: { characterId: { composition, gaze, states: [], ageModifier } }
+        let perCharacterSettings = {};
+
         // ===== UI State (V3 Story Mode) =====
         let currentProjectId = null;
         let currentProject = null;
@@ -1696,18 +1668,32 @@
             if (index >= 0) {
                 // Deselect
                 selectedCharacters.splice(index, 1);
+                // V8: Remove per-character settings
+                delete perCharacterSettings[character.id];
             } else {
                 // Select
                 if (currentMode === 'solo') {
                     // Solo mode: replace selection
                     selectedCharacters = [character];
+                    // V8: Clear other settings
+                    perCharacterSettings = {};
                 } else {
                     // Duo/Comic mode: add selection
                     selectedCharacters.push(character);
                 }
+                // V8: Initialize settings for new character
+                if (!perCharacterSettings[character.id]) {
+                    perCharacterSettings[character.id] = {
+                        composition: '',
+                        gaze: '',
+                        states: [],
+                        ageModifier: ''
+                    };
+                }
             }
 
             renderCharacterSelector();
+            renderPerCharacterAdvancedSettings(); // V8
             updatePromptPreview();
         }
 
@@ -1736,6 +1722,166 @@
             `).join('');
 
             selectedImages = allImages;
+        }
+
+        // V8: Render per-character advanced settings
+        function renderPerCharacterAdvancedSettings() {
+            const container = document.getElementById('per-character-advanced-settings');
+
+            if (selectedCharacters.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = selectedCharacters.map(char => {
+                const settings = perCharacterSettings[char.id] || { composition: '', gaze: '', states: [], ageModifier: '' };
+
+                return `
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span>⚙️ ${char.name} - 詳細設定</span>
+                            <span class="icon">▼</span>
+                        </div>
+                        <div class="accordion-content collapsed">
+                            <div class="space-y-4">
+                                <!-- Composition -->
+                                <div>
+                                    <label class="block text-gray-700 font-semibold mb-2 text-sm">📐 構図 (Composition)</label>
+                                    <select class="char-composition w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" data-char-id="${char.id}">
+                                        <option value="">指定なし</option>
+                                        <option value="face only" ${settings.composition === 'face only' ? 'selected' : ''}>😶 顔だけ</option>
+                                        <option value="face focus, close-up" ${settings.composition === 'face focus, close-up' ? 'selected' : ''}>😀 顔アップ</option>
+                                        <option value="upper body, bust shot" ${settings.composition === 'upper body, bust shot' ? 'selected' : ''}>👔 バストアップ</option>
+                                        <option value="upper body" ${settings.composition === 'upper body' ? 'selected' : ''}>🙋 上半身</option>
+                                        <option value="cowboy shot" ${settings.composition === 'cowboy shot' ? 'selected' : ''}>🤠 太ももから上</option>
+                                        <option value="full body" ${settings.composition === 'full body' ? 'selected' : ''}>🧍 全身</option>
+                                    </select>
+                                </div>
+
+                                <!-- Gaze -->
+                                <div>
+                                    <label class="block text-gray-700 font-semibold mb-2 text-sm">👁️ 視線 (Gaze)</label>
+                                    <select class="char-gaze w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" data-char-id="${char.id}">
+                                        <option value="">指定なし</option>
+                                        <option value="looking at viewer" ${settings.gaze === 'looking at viewer' ? 'selected' : ''}>📷 カメラ目線</option>
+                                        <option value="looking up" ${settings.gaze === 'looking up' ? 'selected' : ''}>🔺 上目遣い</option>
+                                        <option value="looking down" ${settings.gaze === 'looking down' ? 'selected' : ''}>🔻 見下ろす</option>
+                                        <option value="looking away, averted eyes" ${settings.gaze === 'looking away, averted eyes' ? 'selected' : ''}>↔️ 目を逸らす</option>
+                                        <option value="looking back" ${settings.gaze === 'looking back' ? 'selected' : ''}>🔙 後ろを見る</option>
+                                    </select>
+                                </div>
+
+                                <!-- States -->
+                                <div>
+                                    <label class="block text-gray-700 font-semibold mb-2 text-sm">💫 状態 (State)</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="heavy breathing, panting" ${settings.states.includes('heavy breathing, panting') ? 'checked' : ''}>
+                                            <span>😮‍💨 息荒い</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="blush, embarrassed" ${settings.states.includes('blush, embarrassed') ? 'checked' : ''}>
+                                            <span>😊 赤面</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="teary eyes, watery eyes" ${settings.states.includes('teary eyes, watery eyes') ? 'checked' : ''}>
+                                            <span>🥺 涙目</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="fang, yaeba" ${settings.states.includes('fang, yaeba') ? 'checked' : ''}>
+                                            <span>😁 八重歯</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Age Modifier -->
+                                <div>
+                                    <label class="block text-gray-700 font-semibold mb-2 text-sm">👶 年齢修正 (Age)</label>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer text-sm">
+                                            <input type="radio" name="age-${char.id}" class="char-age w-4 h-4" data-char-id="${char.id}" value="toddler, very young" ${settings.ageModifier === 'toddler, very young' ? 'checked' : ''}>
+                                            <span>👶 幼児</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer text-sm">
+                                            <input type="radio" name="age-${char.id}" class="char-age w-4 h-4" data-char-id="${char.id}" value="child, young" ${settings.ageModifier === 'child, young' ? 'checked' : ''}>
+                                            <span>🧒 少年・少女</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer text-sm">
+                                            <input type="radio" name="age-${char.id}" class="char-age w-4 h-4" data-char-id="${char.id}" value="" ${settings.ageModifier === '' ? 'checked' : ''}>
+                                            <span>🧑 青年 (Default)</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer text-sm">
+                                            <input type="radio" name="age-${char.id}" class="char-age w-4 h-4" data-char-id="${char.id}" value="middle-aged, mature" ${settings.ageModifier === 'middle-aged, mature' ? 'checked' : ''}>
+                                            <span>🧓 年配</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer text-sm">
+                                            <input type="radio" name="age-${char.id}" class="char-age w-4 h-4" data-char-id="${char.id}" value="old, elderly" ${settings.ageModifier === 'old, elderly' ? 'checked' : ''}>
+                                            <span>👴 老人</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add event listeners for per-character settings
+            attachPerCharacterSettingsListeners();
+        }
+
+        // V8: Attach event listeners for per-character advanced settings
+        function attachPerCharacterSettingsListeners() {
+            // Composition selectors
+            document.querySelectorAll('.char-composition').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const charId = parseInt(e.target.dataset.charId);
+                    if (perCharacterSettings[charId]) {
+                        perCharacterSettings[charId].composition = e.target.value;
+                        updatePromptPreview();
+                    }
+                });
+            });
+
+            // Gaze selectors
+            document.querySelectorAll('.char-gaze').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const charId = parseInt(e.target.dataset.charId);
+                    if (perCharacterSettings[charId]) {
+                        perCharacterSettings[charId].gaze = e.target.value;
+                        updatePromptPreview();
+                    }
+                });
+            });
+
+            // State checkboxes
+            document.querySelectorAll('.char-state').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const charId = parseInt(e.target.dataset.charId);
+                    const state = e.target.dataset.state;
+                    if (perCharacterSettings[charId]) {
+                        if (e.target.checked) {
+                            if (!perCharacterSettings[charId].states.includes(state)) {
+                                perCharacterSettings[charId].states.push(state);
+                            }
+                        } else {
+                            perCharacterSettings[charId].states = perCharacterSettings[charId].states.filter(s => s !== state);
+                        }
+                        updatePromptPreview();
+                    }
+                });
+            });
+
+            // Age modifier radios
+            document.querySelectorAll('.char-age').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const charId = parseInt(e.target.dataset.charId);
+                    if (perCharacterSettings[charId]) {
+                        perCharacterSettings[charId].ageModifier = e.target.value;
+                        updatePromptPreview();
+                    }
+                });
+            });
         }
 
         // ===== Situation Selection (V2) =====
@@ -1913,41 +2059,38 @@
                 sections.push(positivePreset);
             }
 
-            // Character sections
+            // Character sections with V8 per-character advanced settings
             if (selectedCharacters.length > 0) {
                 selectedCharacters.forEach(char => {
                     const charTags = buildCharacterPrompt(char, format);
+
+                    // V8: Add per-character advanced settings
+                    const advancedParts = [];
+                    const settings = perCharacterSettings[char.id];
+                    if (settings) {
+                        if (settings.composition) advancedParts.push(settings.composition);
+                        if (settings.gaze) advancedParts.push(settings.gaze);
+                        if (settings.states && settings.states.length > 0) {
+                            advancedParts.push(...settings.states);
+                        }
+                        if (settings.ageModifier) advancedParts.push(settings.ageModifier);
+                    }
+
+                    // V8: Add character physical attributes from database
+                    if (char.age) advancedParts.push(char.age);
+                    if (char.height) advancedParts.push(char.height);
+                    if (char.bodyType) advancedParts.push(char.bodyType);
+                    if (char.customBodyType) advancedParts.push(char.customBodyType);
+
+                    // Build final character section
                     if (charTags) {
-                        const charSection = `[Character: ${char.name}]\n${charTags}`;
+                        let charSection = `[Character: ${char.name}]\n${charTags}`;
+                        if (advancedParts.length > 0) {
+                            charSection += `\n${advancedParts.join(', ')}`;
+                        }
                         sections.push(charSection);
                     }
                 });
-            }
-
-            // V7: Advanced Settings
-            const advancedParts = [];
-
-            // Composition
-            const composition = document.getElementById('composition-selector')?.value;
-            if (composition) advancedParts.push(composition);
-
-            // Gaze
-            const gaze = document.getElementById('gaze-selector')?.value;
-            if (gaze) advancedParts.push(gaze);
-
-            // State checkboxes
-            const stateCheckboxes = document.querySelectorAll('.state-checkbox:checked');
-            stateCheckboxes.forEach(checkbox => {
-                advancedParts.push(checkbox.dataset.state);
-            });
-
-            // Age modifier
-            const age = document.querySelector('input[name="age-modifier"]:checked')?.value;
-            if (age) advancedParts.push(age);
-
-            if (advancedParts.length > 0) {
-                const advancedSection = `[Advanced]\n${advancedParts.join(', ')}`;
-                sections.push(advancedSection);
             }
 
             // Scene/Action section with group tags
@@ -2193,6 +2336,17 @@
                             document.getElementById('accessories-en').value = b.accessories?.en || '';
                         }
 
+                        // V8: Physical attributes
+                        document.getElementById('character-age').value = character.age || '';
+                        document.getElementById('character-height').value = character.height || '';
+                        if (character.bodyType) {
+                            const bodyTypeRadio = document.querySelector(`input[name="body-type"][value="${character.bodyType}"]`);
+                            if (bodyTypeRadio) {
+                                bodyTypeRadio.checked = true;
+                            }
+                        }
+                        document.getElementById('custom-body-type').value = character.customBodyType || '';
+
                         const previewContainer = document.getElementById('image-preview-container');
                         if (character.images && character.images.length > 0) {
                             previewContainer.innerHTML = character.images.map((img, index) => `
@@ -2280,6 +2434,11 @@
                         en: document.getElementById('accessories-en').value
                     }
                 },
+                // V8: Physical attributes
+                age: document.getElementById('character-age').value,
+                height: document.getElementById('character-height').value,
+                bodyType: document.querySelector('input[name="body-type"]:checked')?.value || '',
+                customBodyType: document.getElementById('custom-body-type').value,
                 images: Array.from(document.getElementById('image-preview-container').querySelectorAll('img'))
                     .map(img => img.src)
             };
@@ -2795,6 +2954,24 @@
                             </div>
                         </div>
 
+                        <!-- V8: Panel Configuration -->
+                        <div class="mb-4 border-t pt-4">
+                            <div class="mb-3">
+                                <label class="block text-sm font-semibold text-gray-600 mb-2">📐 1ページあたりのコマ数</label>
+                                <select class="panels-per-page w-full px-3 py-2 border rounded-lg text-sm" data-page-id="${page.id}">
+                                    <option value="1" ${(page.panelsPerPage || 1) === 1 ? 'selected' : ''}>1コマ（1枚）</option>
+                                    <option value="2" ${page.panelsPerPage === 2 ? 'selected' : ''}>2コマ</option>
+                                    <option value="3" ${page.panelsPerPage === 3 ? 'selected' : ''}>3コマ</option>
+                                    <option value="4" ${page.panelsPerPage === 4 ? 'selected' : ''}>4コマ</option>
+                                    <option value="6" ${page.panelsPerPage === 6 ? 'selected' : ''}>6コマ</option>
+                                </select>
+                            </div>
+
+                            <div class="page-panels-container space-y-3" data-page-id="${page.id}">
+                                ${renderPanelConfigs(page)}
+                            </div>
+                        </div>
+
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-600 mb-1">場所</label>
@@ -2851,6 +3028,65 @@
             return ''; // Will be populated dynamically
         }
 
+        // V8: Render panel configurations for a page
+        function renderPanelConfigs(page) {
+            const panelCount = page.panelsPerPage || 1;
+            const panels = page.panels || [];
+
+            // Ensure panels array matches panelCount
+            while (panels.length < panelCount) {
+                panels.push({ characterNames: [], composition: '', isBackgroundOnly: false, customDescription: '' });
+            }
+
+            return Array.from({ length: panelCount }, (_, i) => {
+                const panel = panels[i] || { characterNames: [], composition: '', isBackgroundOnly: false, customDescription: '' };
+
+                return `
+                    <div class="border rounded-lg p-3 bg-gray-50">
+                        <div class="flex justify-between items-center mb-2">
+                            <h5 class="font-semibold text-gray-700 text-sm">🎬 コマ ${i + 1}</h5>
+                            <label class="flex items-center text-xs cursor-pointer">
+                                <input type="checkbox" class="panel-bg-only mr-1" data-page-id="${page.id}" data-panel-index="${i}" ${panel.isBackgroundOnly ? 'checked' : ''}>
+                                <span>背景のみ</span>
+                            </label>
+                        </div>
+
+                        ${!panel.isBackgroundOnly ? `
+                            <div class="mb-2">
+                                <label class="block text-xs text-gray-600 mb-1">キャラクター名（複数可）</label>
+                                <input type="text" class="panel-characters w-full px-2 py-1 border rounded text-xs"
+                                    data-page-id="${page.id}" data-panel-index="${i}"
+                                    value="${(panel.characterNames || []).join(', ')}"
+                                    placeholder="例：カミル, リン">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="block text-xs text-gray-600 mb-1">構図</label>
+                                <select class="panel-composition w-full px-2 py-1 border rounded text-xs"
+                                    data-page-id="${page.id}" data-panel-index="${i}">
+                                    <option value="">指定なし</option>
+                                    <option value="face only" ${panel.composition === 'face only' ? 'selected' : ''}>顔だけ</option>
+                                    <option value="face focus, close-up" ${panel.composition === 'face focus, close-up' ? 'selected' : ''}>顔アップ</option>
+                                    <option value="upper body, bust shot" ${panel.composition === 'upper body, bust shot' ? 'selected' : ''}>バストアップ</option>
+                                    <option value="upper body" ${panel.composition === 'upper body' ? 'selected' : ''}>上半身</option>
+                                    <option value="cowboy shot" ${panel.composition === 'cowboy shot' ? 'selected' : ''}>太ももから上</option>
+                                    <option value="full body" ${panel.composition === 'full body' ? 'selected' : ''}>全身</option>
+                                </select>
+                            </div>
+                        ` : ''}
+
+                        <div>
+                            <label class="block text-xs text-gray-600 mb-1">カスタム説明</label>
+                            <input type="text" class="panel-custom w-full px-2 py-1 border rounded text-xs"
+                                data-page-id="${page.id}" data-panel-index="${i}"
+                                value="${panel.customDescription || ''}"
+                                placeholder="例：夕焼けの背景、効果線">
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function generatePagePrompt(page) {
             let parts = [];
 
@@ -2878,7 +3114,10 @@
                 characterIds: [],
                 situationId: null,
                 actionId: null,
-                customAction: ''
+                customAction: '',
+                // V8: Panel configuration
+                panelsPerPage: 1,
+                panels: [{ characterNames: [], composition: '', isBackgroundOnly: false, customDescription: '' }]
             };
 
             await addPage(newPage);
@@ -2899,6 +3138,59 @@
 
             page[field] = value;
             await updatePage(page);
+        }
+
+        // V8: Update panels per page and regenerate panel configs
+        async function updatePanelsPerPage(pageId, panelCount) {
+            const pages = await getPagesByProject(currentProjectId);
+            const page = pages.find(p => p.id === pageId);
+            if (!page) return;
+
+            page.panelsPerPage = panelCount;
+
+            // Initialize panels array if needed
+            if (!page.panels) page.panels = [];
+
+            // Adjust panels array to match new count
+            while (page.panels.length < panelCount) {
+                page.panels.push({ characterNames: [], composition: '', isBackgroundOnly: false, customDescription: '' });
+            }
+            if (page.panels.length > panelCount) {
+                page.panels = page.panels.slice(0, panelCount);
+            }
+
+            await updatePage(page);
+
+            // Re-render the panel configs
+            const container = document.querySelector(`.page-panels-container[data-page-id="${pageId}"]`);
+            if (container) {
+                container.innerHTML = renderPanelConfigs(page);
+            }
+        }
+
+        // V8: Update individual panel data
+        async function updatePanelData(pageId, panelIndex, field, value) {
+            const pages = await getPagesByProject(currentProjectId);
+            const page = pages.find(p => p.id === pageId);
+            if (!page) return;
+
+            if (!page.panels) page.panels = [];
+            if (!page.panels[panelIndex]) {
+                page.panels[panelIndex] = { characterNames: [], composition: '', isBackgroundOnly: false, customDescription: '' };
+            }
+
+            page.panels[panelIndex][field] = value;
+
+            // If background only is toggled, re-render the panel
+            if (field === 'isBackgroundOnly') {
+                await updatePage(page);
+                const container = document.querySelector(`.page-panels-container[data-page-id="${pageId}"]`);
+                if (container) {
+                    container.innerHTML = renderPanelConfigs(page);
+                }
+            } else {
+                await updatePage(page);
+            }
         }
 
         function togglePageAccordion(pageId) {
@@ -3208,19 +3500,7 @@
                 radio.addEventListener('change', updatePromptPreview);
             });
 
-            // V7 controls
-            document.getElementById('composition-selector')?.addEventListener('change', updatePromptPreview);
-            document.getElementById('gaze-selector')?.addEventListener('change', updatePromptPreview);
-
-            // State checkboxes
-            document.querySelectorAll('.state-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', updatePromptPreview);
-            });
-
-            // Age modifier radio buttons
-            document.querySelectorAll('input[name="age-modifier"]').forEach(radio => {
-                radio.addEventListener('change', updatePromptPreview);
-            });
+            // V8: Per-character advanced settings event listeners are attached in attachPerCharacterSettingsListeners()
 
             // Color mode radio buttons
             document.querySelectorAll('input[name="color-mode"]').forEach(radio => {
@@ -3387,11 +3667,32 @@
                 } else if (e.target.classList.contains('page-action')) {
                     updatePageData(parseInt(e.target.dataset.pageId), 'actionId', parseInt(e.target.value) || null);
                 }
+                // V8: Panels per page
+                else if (e.target.classList.contains('panels-per-page')) {
+                    updatePanelsPerPage(parseInt(e.target.dataset.pageId), parseInt(e.target.value));
+                }
+                // V8: Panel composition
+                else if (e.target.classList.contains('panel-composition')) {
+                    updatePanelData(parseInt(e.target.dataset.pageId), parseInt(e.target.dataset.panelIndex), 'composition', e.target.value);
+                }
+                // V8: Panel background only toggle
+                else if (e.target.classList.contains('panel-bg-only')) {
+                    updatePanelData(parseInt(e.target.dataset.pageId), parseInt(e.target.dataset.panelIndex), 'isBackgroundOnly', e.target.checked);
+                }
             });
 
             document.getElementById('pages-container').addEventListener('input', (e) => {
                 if (e.target.classList.contains('page-custom-action')) {
                     updatePageData(parseInt(e.target.dataset.pageId), 'customAction', e.target.value);
+                }
+                // V8: Panel character names
+                else if (e.target.classList.contains('panel-characters')) {
+                    const names = e.target.value.split(',').map(n => n.trim()).filter(n => n);
+                    updatePanelData(parseInt(e.target.dataset.pageId), parseInt(e.target.dataset.panelIndex), 'characterNames', names);
+                }
+                // V8: Panel custom description
+                else if (e.target.classList.contains('panel-custom')) {
+                    updatePanelData(parseInt(e.target.dataset.pageId), parseInt(e.target.dataset.panelIndex), 'customDescription', e.target.value);
                 }
             });
 
