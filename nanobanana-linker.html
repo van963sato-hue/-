@@ -305,10 +305,10 @@
                             </div>
                         </div>
 
-                        <!-- Accordion 2: Scene & Action Settings -->
+                        <!-- Accordion 2: Scene & Props (V6) -->
                         <div class="accordion">
                             <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <span>🎬 シーン・アクション設定</span>
+                                <span>🎬 Scene & Props （シーン・小物・時間帯）</span>
                                 <span class="icon">▼</span>
                             </div>
                             <div class="accordion-content">
@@ -336,6 +336,33 @@
                                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
                                     </div>
 
+                                    <!-- Props (V6) -->
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800 mb-3">🎁 Props （小物）</h3>
+                                        <div id="props-selector" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                                            <button class="props-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">
+                                                指定なし
+                                            </button>
+                                        </div>
+                                        <label class="block text-gray-700 font-semibold mb-2">フリー入力（小物）</label>
+                                        <textarea id="custom-props-input" rows="2" placeholder="例：剣、本、花束、など"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                    </div>
+
+                                    <!-- Time of Day (V6) -->
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800 mb-3">🌅 When? （時間帯）</h3>
+                                        <select id="time-of-day-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <option value="">指定なし</option>
+                                            <option value="morning glow, sunrise">🌅 朝焼け (Morning Glow, Sunrise)</option>
+                                            <option value="morning, daylight">☀️ 朝 (Morning, Daylight)</option>
+                                            <option value="noon, sunny">🌞 昼 (Noon, Sunny)</option>
+                                            <option value="sunset, dusk">🌇 夕方 (Sunset, Dusk)</option>
+                                            <option value="night, moonlight">🌙 夜 (Night, Moonlight)</option>
+                                            <option value="midnight, starry sky">🌌 深夜 (Midnight, Starry Sky)</option>
+                                        </select>
+                                    </div>
+
                                     <!-- Options (Duo Mode) -->
                                     <div class="hidden" id="duo-options">
                                         <h3 class="text-lg font-bold text-gray-800 mb-3">オプション</h3>
@@ -348,20 +375,43 @@
                             </div>
                         </div>
 
-                        <!-- Accordion 3: Atmosphere Settings (V5) -->
+                        <!-- Accordion 3: Style & Color (V6) -->
                         <div class="accordion">
                             <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <span>🎨 画作り設定（Style, Color, Layout）</span>
+                                <span>🎨 Style & Color （画風・色・線・レイアウト）</span>
                                 <span class="icon">▼</span>
                             </div>
                             <div class="accordion-content">
                                 <div class="space-y-6">
-                                    <!-- Art Style -->
+                                    <!-- Art Styles (Multi-select V6) -->
                                     <div>
-                                        <label class="block text-gray-700 font-semibold mb-2">🖼️ アートスタイル</label>
-                                        <select id="art-style-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                            <option value="">指定なし</option>
-                                        </select>
+                                        <label class="block text-gray-700 font-semibold mb-3">🖼️ アートスタイル（複数選択可）</label>
+                                        <div id="art-style-checkboxes" class="space-y-2 max-h-48 overflow-y-auto p-3 border border-gray-300 rounded-lg bg-gray-50">
+                                            <div class="text-sm text-gray-400">スタイルを登録してください</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Lineart Strength (V6) -->
+                                    <div>
+                                        <label class="block text-gray-700 font-semibold mb-3">✏️ 線の強弱</label>
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                            <label class="flex items-center space-x-2">
+                                                <input type="radio" name="lineart-strength" value="" checked>
+                                                <span class="text-sm">指定なし</span>
+                                            </label>
+                                            <label class="flex items-center space-x-2">
+                                                <input type="radio" name="lineart-strength" value="outline">
+                                                <span class="text-sm">縁取りあり</span>
+                                            </label>
+                                            <label class="flex items-center space-x-2">
+                                                <input type="radio" name="lineart-strength" value="thick outline">
+                                                <span class="text-sm">太い縁取り</span>
+                                            </label>
+                                            <label class="flex items-center space-x-2">
+                                                <input type="radio" name="lineart-strength" value="borderless">
+                                                <span class="text-sm">縁取りなし</span>
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <!-- Color Palette -->
@@ -655,6 +705,18 @@
 
                     <div id="style-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
+
+                <!-- Props Management (V6) -->
+                <div class="card p-6 mt-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">🎁 小物管理 (Props)</h2>
+                        <button id="add-prop-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                            ➕ 小物追加
+                        </button>
+                    </div>
+
+                    <div id="props-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -682,6 +744,38 @@
                     <textarea id="style-prompt" rows="4" required
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="例：anime style, vibrant colors, cel shading"></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
+                    💾 保存
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Props Modal (V6) -->
+    <div id="props-modal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800" id="props-modal-title">小物登録</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+
+            <form id="props-form" class="space-y-4">
+                <input type="hidden" id="prop-id">
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">小物名 (Name)</label>
+                    <input type="text" id="prop-name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：剣、本、花束">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">プロンプト (Prompt)</label>
+                    <textarea id="prop-prompt" rows="4" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：sword, steel blade, ornate handle"></textarea>
                 </div>
 
                 <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
@@ -958,7 +1052,7 @@
     <script>
         // ===== IndexedDB Setup =====
         const DB_NAME = 'NanobananaLinkerDB';
-        const DB_VERSION = 4; // V5: Added Styles store
+        const DB_VERSION = 5; // V6: Added Props store
         let db;
 
         function initDB() {
@@ -1010,6 +1104,12 @@
                     if (!db.objectStoreNames.contains('styles')) {
                         const styleStore = db.createObjectStore('styles', { keyPath: 'id', autoIncrement: true });
                         styleStore.createIndex('name', 'name', { unique: false });
+                    }
+
+                    // Props Store (V6)
+                    if (!db.objectStoreNames.contains('props')) {
+                        const propStore = db.createObjectStore('props', { keyPath: 'id', autoIncrement: true });
+                        propStore.createIndex('name', 'name', { unique: false });
                     }
 
                     // Settings Store
@@ -1193,6 +1293,51 @@
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['styles'], 'readonly');
                 const store = transaction.objectStore('styles');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ===== Props Operations (V6) =====
+        function addProp(prop) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['props'], 'readwrite');
+                const store = transaction.objectStore('props');
+                const request = store.add(prop);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateProp(prop) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['props'], 'readwrite');
+                const store = transaction.objectStore('props');
+                const request = store.put(prop);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteProp(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['props'], 'readwrite');
+                const store = transaction.objectStore('props');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllProps() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['props'], 'readonly');
+                const store = transaction.objectStore('props');
                 const request = store.getAll();
 
                 request.onsuccess = () => resolve(request.result);
@@ -1734,21 +1879,38 @@
             if (selectedAction) sceneActionParts.push(selectedAction.tags);
             if (customAction) sceneActionParts.push(customAction);
 
+            // V6: Props
+            if (selectedProp) sceneActionParts.push(selectedProp.prompt);
+            const customProps = document.getElementById('custom-props-input')?.value.trim();
+            if (customProps) sceneActionParts.push(customProps);
+
+            // V6: Time of Day
+            const timeOfDay = document.getElementById('time-of-day-selector')?.value;
+            if (timeOfDay) sceneActionParts.push(timeOfDay);
+
             if (sceneActionParts.length > 0) {
                 const sceneSection = `[Scene/Action]\n${sceneActionParts.join(', ')}`;
                 sections.push(sceneSection);
             }
 
-            // V5: Atmosphere Settings
+            // V6: Atmosphere Settings
             const atmosphereParts = [];
 
-            // Art Style
-            const styleSelector = document.getElementById('art-style-selector');
-            if (styleSelector && styleSelector.value) {
-                const selectedStyleObj = styles.find(s => s.id == styleSelector.value);
-                if (selectedStyleObj) {
-                    atmosphereParts.push(selectedStyleObj.prompt);
+            // V6: Art Styles (Multiple)
+            if (selectedStyles.length > 0) {
+                const stylePrompts = selectedStyles.map(styleId => {
+                    const style = styles.find(s => s.id === styleId);
+                    return style ? style.prompt : '';
+                }).filter(p => p);
+                if (stylePrompts.length > 0) {
+                    atmosphereParts.push(...stylePrompts);
                 }
+            }
+
+            // V6: Lineart Strength
+            const lineartStrength = document.querySelector('input[name="lineart-strength"]:checked')?.value;
+            if (lineartStrength) {
+                atmosphereParts.push(lineartStrength);
             }
 
             // Color Mode
@@ -2255,7 +2417,118 @@
 
             await deleteStyle(id);
             loadStyleList();
-            loadStyleSelector();
+            loadStyleCheckboxes();
+        }
+
+        // ===== Props Management (V6) =====
+        let editingPropId = null;
+        let props = [];
+        let selectedProp = null;
+
+        async function loadPropsList() {
+            const allProps = await getAllProps();
+            const container = document.getElementById('props-list');
+
+            if (allProps.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">小物が登録されていません</div>';
+                return;
+            }
+
+            container.innerHTML = allProps.map(prop => `
+                <div class="card p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-gray-800">${prop.name}</h3>
+                        <div class="space-x-2">
+                            <button class="edit-prop text-blue-500 hover:text-blue-700" data-id="${prop.id}">✏️</button>
+                            <button class="delete-prop text-red-500 hover:text-red-700" data-id="${prop.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">${prop.prompt}</p>
+                </div>
+            `).join('');
+        }
+
+        function openPropsModal(propId = null) {
+            editingPropId = propId;
+            const modal = document.getElementById('props-modal');
+            const title = document.getElementById('props-modal-title');
+
+            if (propId) {
+                title.textContent = '小物編集';
+                getAllProps().then(allProps => {
+                    const prop = allProps.find(p => p.id === propId);
+                    if (prop) {
+                        document.getElementById('prop-id').value = prop.id;
+                        document.getElementById('prop-name').value = prop.name;
+                        document.getElementById('prop-prompt').value = prop.prompt;
+                    }
+                });
+            } else {
+                title.textContent = '小物登録';
+                document.getElementById('props-form').reset();
+                document.getElementById('prop-id').value = '';
+            }
+
+            modal.classList.add('show');
+        }
+
+        async function saveProp(event) {
+            event.preventDefault();
+
+            const propData = {
+                name: document.getElementById('prop-name').value,
+                prompt: document.getElementById('prop-prompt').value
+            };
+
+            if (editingPropId) {
+                propData.id = editingPropId;
+                await updateProp(propData);
+            } else {
+                await addProp(propData);
+            }
+
+            closeModal();
+            loadPropsList();
+            renderPropsSelector();
+        }
+
+        async function deletePropConfirm(id) {
+            if (!confirm('この小物を削除しますか？')) return;
+
+            await deleteProp(id);
+            loadPropsList();
+            renderPropsSelector();
+        }
+
+        async function renderPropsSelector() {
+            props = await getAllProps();
+            const container = document.getElementById('props-selector');
+
+            let html = '<button class="props-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">指定なし</button>';
+
+            props.forEach(prop => {
+                const activeClass = selectedProp?.id === prop.id ? 'active' : '';
+                html += `<button class="props-btn ${activeClass} p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="${prop.id}">${prop.name}</button>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function selectProp(id) {
+            if (!id) {
+                selectedProp = null;
+            } else {
+                selectedProp = props.find(p => p.id == id);
+            }
+
+            document.querySelectorAll('.props-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            const activeBtn = document.querySelector(`.props-btn[data-id="${id}"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            updatePromptPreview();
         }
 
         // ===== Project Management (V3) =====
@@ -2680,19 +2953,38 @@
         }
 
         // ===== V5 Atmosphere Functions =====
-        let selectedStyle = null;
+        let selectedStyles = []; // V6: Multiple styles
         let styles = [];
 
-        async function loadStyleSelector() {
+        async function loadStyleCheckboxes() {
             styles = await getAllStyles();
-            const selector = document.getElementById('art-style-selector');
+            const container = document.getElementById('art-style-checkboxes');
 
-            selector.innerHTML = '<option value="">指定なし</option>';
-            styles.forEach(style => {
-                const option = document.createElement('option');
-                option.value = style.id;
-                option.textContent = style.name;
-                selector.appendChild(option);
+            if (styles.length === 0) {
+                container.innerHTML = '<div class="text-sm text-gray-400">スタイルを登録してください</div>';
+                return;
+            }
+
+            container.innerHTML = styles.map(style => `
+                <label class="flex items-center space-x-2 p-2 hover:bg-blue-50 rounded cursor-pointer">
+                    <input type="checkbox" class="style-checkbox w-4 h-4" data-id="${style.id}">
+                    <span class="text-sm">${style.name}</span>
+                </label>
+            `).join('');
+
+            // Add event listeners to checkboxes
+            container.querySelectorAll('.style-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const styleId = parseInt(e.target.dataset.id);
+                    if (e.target.checked) {
+                        if (!selectedStyles.includes(styleId)) {
+                            selectedStyles.push(styleId);
+                        }
+                    } else {
+                        selectedStyles = selectedStyles.filter(id => id !== styleId);
+                    }
+                    updatePromptPreview();
+                });
             });
         }
 
@@ -2785,9 +3077,22 @@
             document.getElementById('output-format')?.addEventListener('change', updatePromptPreview);
             document.getElementById('strict-source-mode')?.addEventListener('change', updatePromptPreview);
 
-            // V5 controls
-            document.getElementById('art-style-selector')?.addEventListener('change', updatePromptPreview);
+            // V6 controls
             document.getElementById('aspect-ratio-selector')?.addEventListener('change', updatePromptPreview);
+            document.getElementById('time-of-day-selector')?.addEventListener('change', updatePromptPreview);
+            document.getElementById('custom-props-input')?.addEventListener('input', updatePromptPreview);
+
+            // Props selector
+            document.getElementById('props-selector').addEventListener('click', (e) => {
+                if (e.target.classList.contains('props-btn')) {
+                    selectProp(e.target.dataset.id);
+                }
+            });
+
+            // Lineart strength radio buttons
+            document.querySelectorAll('input[name="lineart-strength"]').forEach(radio => {
+                radio.addEventListener('change', updatePromptPreview);
+            });
 
             // Color mode radio buttons
             document.querySelectorAll('input[name="color-mode"]').forEach(radio => {
@@ -2888,6 +3193,20 @@
             // Style Form (V5)
             document.getElementById('style-form').addEventListener('submit', saveStyle);
 
+            // Props DB (V6)
+            document.getElementById('add-prop-btn').addEventListener('click', () => openPropsModal());
+
+            document.getElementById('props-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-prop')) {
+                    openPropsModal(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('delete-prop')) {
+                    deletePropConfirm(parseInt(e.target.dataset.id));
+                }
+            });
+
+            // Props Form (V6)
+            document.getElementById('props-form').addEventListener('submit', saveProp);
+
             // Story Mode (V3)
             document.getElementById('add-project-btn').addEventListener('click', () => openProjectModal());
             document.getElementById('project-form').addEventListener('submit', saveProject);
@@ -2966,9 +3285,11 @@
             await renderGeneratorHub();
             loadSettings();
 
-            // Initialize V5
-            await loadStyleSelector();
+            // Initialize V6
+            await loadStyleCheckboxes();
             await loadStyleList();
+            await renderPropsSelector();
+            await loadPropsList();
             updateColorMode(); // Initialize color picker visibility
         });
 
