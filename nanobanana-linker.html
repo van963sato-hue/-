@@ -8,6 +8,7 @@
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTmFub2JhbmFuYSBMaW5rZXIiLCJzaG9ydF9uYW1lIjoiTmFub2JhbmFuYSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzNiODJmNiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE1qZ2dNVEk0SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWdabWxzYkQwaUl6TmlPREptTmlJdlBqeDBaWGgwSUhnOUlqWTBJaUI1UFNJMk5DSWdabWxzYkQwaUl6Wm1abVptWmlJZ1ptOXVkQzF6YVhwbFBTSTBPQ0lnWm05dWRDMW1ZVzFwYkhrOUlsWmxjbVJoYm1FaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQa000UEM5MFpYaDBQand2YzNablBnPT0iLCJzaXplcyI6IjEyOHgxMjgiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9LHsic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQXhNamd4TWpnaVBqeHlaV04wSUhkcFpIUm9QU0l4TWpnaUlHaGxhV2RvZEQwaU1USTRJaUJtYVd4c1BTSWpNMkk0TW1ZMklpOCtQSFJsZUhRZ2VEMGlOalFpSUhrOUlqWTBJaUJtYVd4c1BTSWpObVptWm1abUlpQm1iMjUwTFhOcGVtVTlJalE0SWlCbWIyNTBMV1poYldsc2VUMGlWbVZ5WkdGdVlTSWdkR1Y0ZEMxaGJtTm9iM0k5SW0xcFpHUnNaU0krUXpnOEwzUmxlSFErUEM5emRtYysiLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <link rel="icon" href="icon.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -218,6 +219,16 @@
             font-weight: 600;
         }
 
+        .pill-tag {
+            border: 1px solid #d1d5db;
+            border-radius: 9999px;
+            padding: 0.3rem 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #ffffff;
+        }
+
         /* Accordion (V5) */
         .accordion {
             border: 2px solid #e5e7eb;
@@ -321,9 +332,46 @@
                                 <span class="icon">▼</span>
                             </div>
                             <div class="accordion-content">
-                                <div id="character-selector" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                                    <div class="text-center text-gray-400 col-span-full py-8">
-                                        キャラクターを登録してください
+                                <div class="space-y-6">
+                                    <div id="character-selector" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                        <div class="text-center text-gray-400 col-span-full py-8">
+                                            キャラクターを登録してください
+                                        </div>
+                                    </div>
+
+                                    <!-- Character Pose (V6) -->
+                                    <div class="bg-blue-50 p-4 rounded-lg">
+                                        <h3 class="text-lg font-bold text-gray-800 mb-3">🧍 キャラポーズ</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-gray-700 font-semibold mb-2">キャラクター</label>
+                                                <select id="pose-character-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                                    <option value="">キャラクターを選択</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-gray-700 font-semibold mb-2">ポーズ</label>
+                                                <select id="pose-selector" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                                    <option value="">指定なし</option>
+                                                    <option value="facing right">➡︎ 右向き</option>
+                                                    <option value="facing left">⬅ 左向き</option>
+                                                    <option value="low angle">⬆ 煽り</option>
+                                                    <option value="high angle">⬇ 俯瞰</option>
+                                                    <option value="angled right">↘ 右斜め</option>
+                                                    <option value="angled left">↙ 左斜め</option>
+                                                    <option value="from behind">🔄 後ろ</option>
+                                                    <option value="from front">🫵 前</option>
+                                                    <option value="custom">カスタム</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <label class="block text-gray-700 font-semibold mb-2">カスタムポーズ</label>
+                                            <input type="text" id="pose-custom-input" placeholder="例：片膝をついて剣を構える"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <p class="text-xs text-gray-500 mt-2">カスタムはキャラクターごとに保存されます。</p>
+                                        </div>
+                                        <div id="pose-summary" class="mt-4 text-sm text-gray-600"></div>
                                     </div>
                                 </div>
                             </div>
@@ -495,6 +543,17 @@
                                                 <span class="text-sm">縁取りなし</span>
                                             </label>
                                         </div>
+                                    </div>
+
+                                    <!-- Expression Variations (V6) -->
+                                    <div>
+                                        <label class="block text-gray-700 font-semibold mb-2">😊 表情変化（差分用）</label>
+                                        <div class="flex flex-col md:flex-row gap-3">
+                                            <input type="text" id="expression-input" placeholder="例：照れ顔、怒り顔、驚き顔"
+                                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                            <button id="add-expression-btn" class="btn-primary text-white px-4 py-2 rounded-lg">追加</button>
+                                        </div>
+                                        <div id="expression-list" class="flex flex-wrap gap-2 mt-3"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1524,6 +1583,9 @@
         let editingSituationId = null;
         let editingActionId = null;
         let editingPropId = null;
+        let characterPoseSettings = {};
+        let currentPoseCharacterId = null;
+        let expressionVariations = [];
 
         // ===== UI State (V3 Story Mode) =====
         let currentProjectId = null;
@@ -1605,6 +1667,7 @@
             }
 
             renderCharacterSelector();
+            renderPoseCharacterSelector();
             updatePromptPreview();
         }
 
@@ -1743,6 +1806,118 @@
             updatePromptPreview();
         }
 
+        // ===== Character Pose (V6) =====
+        function renderPoseCharacterSelector() {
+            const selector = document.getElementById('pose-character-selector');
+            if (!selector) return;
+
+            if (selectedCharacters.length === 0) {
+                selector.innerHTML = '<option value="">キャラクターを選択</option>';
+                currentPoseCharacterId = null;
+                updatePoseInputs();
+                updatePoseSummary();
+                return;
+            }
+
+            const fallbackSelection = selectedCharacters[0]?.id;
+            const previousSelection = selectedCharacters.some(char => char.id === currentPoseCharacterId)
+                ? currentPoseCharacterId
+                : fallbackSelection;
+            selector.innerHTML = selectedCharacters.map(char => `
+                <option value="${char.id}">${char.name}</option>
+            `).join('');
+            selector.value = previousSelection;
+            currentPoseCharacterId = parseInt(selector.value);
+            updatePoseInputs();
+            updatePoseSummary();
+        }
+
+        function updatePoseInputs() {
+            const poseSelector = document.getElementById('pose-selector');
+            const customInput = document.getElementById('pose-custom-input');
+
+            if (!poseSelector || !customInput) return;
+
+            if (!currentPoseCharacterId) {
+                poseSelector.value = '';
+                customInput.value = '';
+                customInput.disabled = true;
+                return;
+            }
+
+            const poseData = characterPoseSettings[currentPoseCharacterId] || {};
+            poseSelector.value = poseData.pose || '';
+            customInput.disabled = poseSelector.value !== 'custom';
+            customInput.value = poseData.customText || '';
+        }
+
+        function setPoseForCharacter(characterId, pose, customText = '') {
+            if (!characterId) return;
+            if (!pose) {
+                delete characterPoseSettings[characterId];
+                return;
+            }
+            characterPoseSettings[characterId] = {
+                pose,
+                customText
+            };
+        }
+
+        function getCharacterPoseTag(characterId) {
+            const poseData = characterPoseSettings[characterId];
+            if (!poseData || !poseData.pose) return '';
+            if (poseData.pose === 'custom') {
+                return poseData.customText?.trim() || '';
+            }
+            return poseData.pose;
+        }
+
+        function updatePoseSummary() {
+            const summary = document.getElementById('pose-summary');
+            if (!summary) return;
+
+            const entries = selectedCharacters
+                .map(char => {
+                    const poseTag = getCharacterPoseTag(char.id);
+                    return poseTag ? `<span class="pill-tag">${char.name}: ${poseTag}</span>` : '';
+                })
+                .filter(Boolean);
+
+            summary.innerHTML = entries.length > 0
+                ? `<div class="flex flex-wrap gap-2">${entries.join('')}</div>`
+                : '<span class="text-gray-400">キャラごとのポーズ設定はまだありません。</span>';
+        }
+
+        // ===== Expression Variations (V6) =====
+        function renderExpressionList() {
+            const list = document.getElementById('expression-list');
+            if (!list) return;
+
+            if (expressionVariations.length === 0) {
+                list.innerHTML = '<span class="text-gray-400">表情変化が追加されていません</span>';
+                return;
+            }
+
+            list.innerHTML = expressionVariations.map((expression, index) => `
+                <span class="pill-tag">
+                    ${expression}
+                    <button class="remove-expression text-gray-500 hover:text-red-500" data-index="${index}">✕</button>
+                </span>
+            `).join('');
+        }
+
+        function addExpressionVariation() {
+            const input = document.getElementById('expression-input');
+            if (!input) return;
+            const value = input.value.trim();
+            if (!value) return;
+
+            expressionVariations.push(value);
+            input.value = '';
+            renderExpressionList();
+            updatePromptPreview();
+        }
+
         // ===== Props Selection (V6) =====
         async function renderPropsSelector() {
             const container = document.getElementById('props-selector');
@@ -1787,6 +1962,8 @@
             await renderSituationSelector();
             await renderActionSelector();
             await renderPropsSelector();
+            renderPoseCharacterSelector();
+            renderExpressionList();
             updatePromptPreview();
         }
 
@@ -1906,7 +2083,11 @@
             // Character sections
             if (selectedCharacters.length > 0) {
                 selectedCharacters.forEach(char => {
-                    const charTags = buildCharacterPrompt(char, format);
+                    let charTags = buildCharacterPrompt(char, format);
+                    const poseTag = getCharacterPoseTag(char.id);
+                    if (poseTag) {
+                        charTags = [charTags, poseTag].filter(Boolean).join(', ');
+                    }
                     if (charTags) {
                         const charSection = `[Character: ${char.name}]\n${charTags}`;
                         sections.push(charSection);
@@ -1971,6 +2152,11 @@
             if (sceneActionParts.length > 0) {
                 const sceneSection = `[Scene/Action]\n${sceneActionParts.join(', ')}`;
                 sections.push(sceneSection);
+            }
+
+            if (expressionVariations.length > 0) {
+                const expressionSection = `[Expression Variations]\n${expressionVariations.join(', ')}`;
+                sections.push(expressionSection);
             }
 
             // V5: Atmosphere Settings
@@ -3109,6 +3295,33 @@
                 }
             });
 
+            // Pose selection (V6)
+            document.getElementById('pose-character-selector')?.addEventListener('change', (e) => {
+                currentPoseCharacterId = parseInt(e.target.value) || null;
+                updatePoseInputs();
+                updatePoseSummary();
+            });
+
+            document.getElementById('pose-selector')?.addEventListener('change', (e) => {
+                const poseValue = e.target.value;
+                const customInput = document.getElementById('pose-custom-input');
+                if (customInput) {
+                    customInput.disabled = poseValue !== 'custom';
+                    if (poseValue !== 'custom') {
+                        customInput.value = '';
+                    }
+                }
+                setPoseForCharacter(currentPoseCharacterId, poseValue, customInput?.value || '');
+                updatePoseSummary();
+                updatePromptPreview();
+            });
+
+            document.getElementById('pose-custom-input')?.addEventListener('input', (e) => {
+                setPoseForCharacter(currentPoseCharacterId, 'custom', e.target.value);
+                updatePoseSummary();
+                updatePromptPreview();
+            });
+
             // Situation selection (V2)
             document.getElementById('situation-selector').addEventListener('click', (e) => {
                 if (e.target.classList.contains('situation-btn')) {
@@ -3134,6 +3347,23 @@
             document.getElementById('custom-action-input').addEventListener('input', updatePromptPreview);
             document.getElementById('custom-props-input').addEventListener('input', updatePromptPreview);
             document.getElementById('time-of-day-selector')?.addEventListener('change', updatePromptPreview);
+
+            // Expression variations (V6)
+            document.getElementById('add-expression-btn')?.addEventListener('click', addExpressionVariation);
+            document.getElementById('expression-input')?.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addExpressionVariation();
+                }
+            });
+            document.getElementById('expression-list')?.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-expression')) {
+                    const index = parseInt(e.target.dataset.index);
+                    expressionVariations.splice(index, 1);
+                    renderExpressionList();
+                    updatePromptPreview();
+                }
+            });
 
             // Quality toggle (V2)
             document.getElementById('quality-positive-toggle').addEventListener('change', updatePromptPreview);
