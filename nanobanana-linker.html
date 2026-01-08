@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#3b82f6">
+    <meta name="theme-color" content="#0b1020">
     <title>Nanobanana Linker - AI Prompt Manager</title>
 
     <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTmFub2JhbmFuYSBMaW5rZXIiLCJzaG9ydF9uYW1lIjoiTmFub2JhbmFuYSIsInN0YXJ0X3VybCI6Ii4vIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzNiODJmNiIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE1qZ2dNVEk0SWo0OGNtVmpkQ0IzYVdSMGFEMGlNVEk0SWlCb1pXbG5hSFE5SWpFeU9DSWdabWxzYkQwaUl6TmlPREptTmlJdlBqeDBaWGgwSUhnOUlqWTBJaUI1UFNJMk5DSWdabWxzYkQwaUl6Wm1abVptWmlJZ1ptOXVkQzF6YVhwbFBTSTBPQ0lnWm05dWRDMW1ZVzFwYkhrOUlsWmxjbVJoYm1FaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQa000UEM5MFpYaDBQand2YzNablBnPT0iLCJzaXplcyI6IjEyOHgxMjgiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9LHsic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQXhNamd4TWpnaVBqeHlaV04wSUhkcFpIUm9QU0l4TWpnaUlHaGxhV2RvZEQwaU1USTRJaUJtYVd4c1BTSWpNMkk0TW1ZMklpOCtQSFJsZUhRZ2VEMGlOalFpSUhrOUlqWTBJaUJtYVd4c1BTSWpObVptWm1abUlpQm1iMjUwTFhOcGVtVTlJalE0SWlCbWIyNTBMV1poYldsc2VUMGlWbVZ5WkdGdVlTSWdkR1Y0ZEMxaGJtTm9iM0k5SW0xcFpHUnNaU0krUXpnOEwzUmxlSFErUEM5emRtYysiLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="./icon-512.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -1790,6 +1793,22 @@
                                         <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
                                             <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="fang, yaeba" ${settings.states.includes('fang, yaeba') ? 'checked' : ''}>
                                             <span>😁 八重歯</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="half-closed eyes, jitome" ${settings.states.includes('half-closed eyes, jitome') ? 'checked' : ''}>
+                                            <span>😑 ジト目</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="empty eyes, highlight off" ${settings.states.includes('empty eyes, highlight off') ? 'checked' : ''}>
+                                            <span>⚫ ハイライトオフ</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="yandere" ${settings.states.includes('yandere') ? 'checked' : ''}>
+                                            <span>🔪 ヤンデレ</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-blue-50 text-sm">
+                                            <input type="checkbox" class="char-state w-4 h-4" data-char-id="${char.id}" data-state="angry, angry face" ${settings.states.includes('angry, angry face') ? 'checked' : ''}>
+                                            <span>😠 怒り</span>
                                         </label>
                                     </div>
                                 </div>
