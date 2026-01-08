@@ -1431,72 +1431,89 @@
             const positivePreset = includePositive ? await getSetting('positivePreset', 'masterpiece, best quality, ultra detailed, 8k resolution') : '';
             const negativePreset = includeNegative ? await getSetting('negativePreset', 'low quality, worst quality, blurry, bad anatomy, watermark') : '';
 
-            let promptParts = [];
+            const customAction = document.getElementById('custom-action-input')?.value.trim();
 
-            // Mode-specific logic
-            if (currentMode === 'solo') {
-                if (selectedCharacters.length > 0) {
-                    const char = selectedCharacters[0];
-                    if (format === 'standard') promptParts.push('solo');
-                    else if (format === 'simple-jp') promptParts.push('単独');
+            // Build structured sections
+            const sections = [];
 
-                    promptParts.push(buildCharacterPrompt(char, format));
-                }
-            } else if (currentMode === 'duo') {
-                if (selectedCharacters.length > 0) {
-                    selectedCharacters.forEach(char => {
-                        promptParts.push(buildCharacterPrompt(char, format));
-                    });
-                }
-            } else if (currentMode === 'comic') {
-                if (format === 'standard') promptParts.push('comic, monochrome');
-                else if (format === 'simple-jp') promptParts.push('漫画, モノクロ');
-                else if (format === 'natural') promptParts.push('A comic-style monochrome illustration');
+            // V4.1: Strict Source Mode (multiple characters)
+            if (strictSource && selectedCharacters.length > 0) {
+                const charNames = selectedCharacters.map(c => `「${c.name}」`).join('と');
+                const actionText = customAction || selectedAction?.name || '画像';
+                const instruction = `添付画像ファイルを唯一のキャラクターソースとして、${charNames}の「${actionText}」画像を生成してください。`;
+                sections.push(instruction);
+            }
 
+            // Header: Quality preset
+            if (positivePreset) {
+                sections.push(positivePreset);
+            }
+
+            // Character sections
+            if (selectedCharacters.length > 0) {
                 selectedCharacters.forEach(char => {
-                    promptParts.push(buildCharacterPrompt(char, format));
+                    const charTags = buildCharacterPrompt(char, format);
+                    if (charTags) {
+                        const charSection = `[Character: ${char.name}]\n${charTags}`;
+                        sections.push(charSection);
+                    }
                 });
             }
 
-            // Add situation
-            if (selectedSituation) {
-                promptParts.push(selectedSituation.tags);
+            // Scene/Action section with group tags
+            const sceneActionParts = [];
+
+            // Add group tags based on mode and character count
+            if (selectedCharacters.length > 0) {
+                if (currentMode === 'solo') {
+                    if (format === 'standard') sceneActionParts.push('solo');
+                    else if (format === 'simple-jp') sceneActionParts.push('単独');
+                } else if (currentMode === 'duo' || currentMode === 'comic') {
+                    const count = selectedCharacters.length;
+                    if (count > 1) {
+                        // Count gender for group tags
+                        const genders = selectedCharacters.map(c => c.builder?.gender || 'androgynous');
+                        const maleCount = genders.filter(g => g === 'male').length;
+                        const femaleCount = genders.filter(g => g === 'female').length;
+
+                        if (format === 'standard') {
+                            if (maleCount + femaleCount === 0 || maleCount === count) {
+                                sceneActionParts.push(`${count}boys`);
+                            } else if (femaleCount === count) {
+                                sceneActionParts.push(`${count}girls`);
+                            } else {
+                                sceneActionParts.push('multiple_girls', 'multiple_boys');
+                            }
+                        } else if (format === 'simple-jp') {
+                            sceneActionParts.push(`${count}人`);
+                        }
+                    }
+                }
+
+                // Comic mode style tags
+                if (currentMode === 'comic') {
+                    if (format === 'standard') sceneActionParts.push('comic', 'monochrome');
+                    else if (format === 'simple-jp') sceneActionParts.push('漫画', 'モノクロ');
+                    else if (format === 'natural') sceneActionParts.push('comic-style monochrome illustration');
+                }
             }
 
-            // Add action
-            if (selectedAction) {
-                promptParts.push(selectedAction.tags);
+            // Add situation and action tags
+            if (selectedSituation) sceneActionParts.push(selectedSituation.tags);
+            if (selectedAction) sceneActionParts.push(selectedAction.tags);
+            if (customAction) sceneActionParts.push(customAction);
+
+            if (sceneActionParts.length > 0) {
+                const sceneSection = `[Scene/Action]\n${sceneActionParts.join(', ')}`;
+                sections.push(sceneSection);
             }
 
-            // Add custom action input
-            const customAction = document.getElementById('custom-action-input')?.value.trim();
-            if (customAction) {
-                promptParts.push(customAction);
-            }
+            // Combine all sections with double line breaks
+            let positivePrompt = sections.filter(s => s.trim()).join(',\n\n');
 
-            // Combine all parts
-            let characterPrompt = promptParts.filter(p => p).join(', ');
-
-            // Apply format-specific combination
-            if (format === 'natural') {
-                // For natural language, connect with proper grammar
-                characterPrompt = promptParts.filter(p => p).join('. ');
-            }
-
-            let positivePrompt = [positivePreset, characterPrompt]
-                .filter(p => p.trim())
-                .join(', ');
-
-            // V4: Strict Source Mode
-            if (strictSource && selectedCharacters.length > 0) {
-                const charName = selectedCharacters[0].name;
-                const actionText = customAction || selectedAction?.name || '画像';
-                const instruction = `添付画像ファイルを唯一のキャラクターソースとして、「${charName}」の「${actionText}」画像を生成してください。\n\n`;
-                positivePrompt = instruction + positivePrompt;
-            }
-
+            // Add negative prompt
             const fullPrompt = negativePreset
-                ? `${positivePrompt}\nNegative prompt: ${negativePreset}`
+                ? `${positivePrompt}\n\nNegative prompt: ${negativePreset}`
                 : positivePrompt;
 
             return fullPrompt;
