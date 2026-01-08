@@ -210,8 +210,11 @@
                 <button class="tab-button active flex-1" data-tab="generator">
                     <span class="text-lg">🎨</span> Generator Hub
                 </button>
+                <button class="tab-button flex-1" data-tab="story">
+                    <span class="text-lg">📖</span> Story Mode
+                </button>
                 <button class="tab-button flex-1" data-tab="database">
-                    <span class="text-lg">👥</span> Character DB
+                    <span class="text-lg">👥</span> Database
                 </button>
                 <button class="tab-button flex-1" data-tab="settings">
                     <span class="text-lg">⚙️</span> Settings
@@ -328,6 +331,73 @@
                                 </label>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Story Mode Tab (V3) -->
+            <div id="story-tab" class="tab-content hidden">
+                <!-- Project List View -->
+                <div id="project-list-view">
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">📚 プロジェクト一覧</h2>
+                            <button id="add-project-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                                ➕ 新規プロジェクト
+                            </button>
+                        </div>
+                        <div id="project-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                </div>
+
+                <!-- Project Detail View (Pages) -->
+                <div id="project-detail-view" class="hidden">
+                    <div class="card p-6 mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <button id="back-to-projects" class="text-blue-500 hover:text-blue-700 font-semibold">
+                                ← プロジェクト一覧に戻る
+                            </button>
+                            <div class="space-x-2">
+                                <button id="edit-project-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">
+                                    ✏️ プロジェクト設定
+                                </button>
+                                <button id="delete-project-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition">
+                                    🗑️ プロジェクト削除
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="project-info" class="mb-4">
+                            <h2 id="project-title-display" class="text-3xl font-bold text-gray-800 mb-2"></h2>
+                            <div id="project-plot-display" class="text-gray-600 whitespace-pre-wrap mb-4"></div>
+
+                            <!-- Style Presets -->
+                            <div class="flex flex-wrap gap-3 mb-4">
+                                <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded">
+                                    <input type="checkbox" id="style-monochrome" class="style-preset">
+                                    <label class="text-sm font-semibold">⬛ Monochrome Manga</label>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded">
+                                    <input type="checkbox" id="style-fullcolor" class="style-preset">
+                                    <label class="text-sm font-semibold">🎨 Full Color</label>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded">
+                                    <input type="checkbox" id="style-4koma" class="style-preset">
+                                    <label class="text-sm font-semibold">📄 4-Koma</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pages -->
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">📄 ページ管理</h3>
+                            <button id="add-page-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                                ➕ ページ追加
+                            </button>
+                        </div>
+                        <div id="pages-container" class="space-y-4"></div>
                     </div>
                 </div>
             </div>
@@ -554,10 +624,47 @@
         </div>
     </div>
 
+    <!-- Project Edit Modal (V3) -->
+    <div id="project-modal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto scrollbar-thin">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800" id="project-modal-title">プロジェクト作成</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+
+            <form id="project-form" class="space-y-4">
+                <input type="hidden" id="project-id">
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">タイトル</label>
+                    <input type="text" id="project-title" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：魔法少女の日常">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">プロット（あらすじ）</label>
+                    <textarea id="project-plot" rows="6"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="物語のあらすじやメモを記入..."></textarea>
+                </div>
+
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="btn-primary flex-1 text-white px-6 py-3 rounded-lg font-semibold">
+                        💾 保存
+                    </button>
+                    <button type="button" class="close-modal bg-gray-300 hover:bg-gray-400 flex-1 text-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                        キャンセル
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // ===== IndexedDB Setup =====
         const DB_NAME = 'NanobananaLinkerDB';
-        const DB_VERSION = 2;
+        const DB_VERSION = 3;
         let db;
 
         function initDB() {
@@ -589,6 +696,20 @@
                     if (!db.objectStoreNames.contains('actions')) {
                         const actionStore = db.createObjectStore('actions', { keyPath: 'id', autoIncrement: true });
                         actionStore.createIndex('name', 'name', { unique: false });
+                    }
+
+                    // Projects Store (V3)
+                    if (!db.objectStoreNames.contains('projects')) {
+                        const projectStore = db.createObjectStore('projects', { keyPath: 'id', autoIncrement: true });
+                        projectStore.createIndex('title', 'title', { unique: false });
+                        projectStore.createIndex('createdAt', 'createdAt', { unique: false });
+                    }
+
+                    // Pages Store (V3)
+                    if (!db.objectStoreNames.contains('pages')) {
+                        const pageStore = db.createObjectStore('pages', { keyPath: 'id', autoIncrement: true });
+                        pageStore.createIndex('projectId', 'projectId', { unique: false });
+                        pageStore.createIndex('order', 'order', { unique: false });
                     }
 
                     // Settings Store
@@ -734,6 +855,114 @@
             });
         }
 
+        // ===== Project Operations (V3) =====
+        function addProject(project) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['projects'], 'readwrite');
+                const store = transaction.objectStore('projects');
+                project.createdAt = Date.now();
+                const request = store.add(project);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateProject(project) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['projects'], 'readwrite');
+                const store = transaction.objectStore('projects');
+                const request = store.put(project);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteProject(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['projects'], 'readwrite');
+                const store = transaction.objectStore('projects');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllProjects() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['projects'], 'readonly');
+                const store = transaction.objectStore('projects');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getProject(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['projects'], 'readonly');
+                const store = transaction.objectStore('projects');
+                const request = store.get(id);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ===== Page Operations (V3) =====
+        function addPage(page) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['pages'], 'readwrite');
+                const store = transaction.objectStore('pages');
+                const request = store.add(page);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updatePage(page) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['pages'], 'readwrite');
+                const store = transaction.objectStore('pages');
+                const request = store.put(page);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deletePage(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['pages'], 'readwrite');
+                const store = transaction.objectStore('pages');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getPagesByProject(projectId) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['pages'], 'readonly');
+                const store = transaction.objectStore('pages');
+                const index = store.index('projectId');
+                const request = index.getAll(projectId);
+
+                request.onsuccess = () => {
+                    const pages = request.result;
+                    // Sort by order
+                    pages.sort((a, b) => a.order - b.order);
+                    resolve(pages);
+                };
+                request.onerror = () => reject(request.error);
+            });
+        }
+
         function saveSetting(key, value) {
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['settings'], 'readwrite');
@@ -770,6 +999,12 @@
         let editingSituationId = null;
         let editingActionId = null;
 
+        // ===== UI State (V3 Story Mode) =====
+        let currentProjectId = null;
+        let currentProject = null;
+        let editingProjectId = null;
+        let openPageId = null; // Currently open accordion page
+
         // ===== Tab Navigation (V2) =====
         function switchTab(tabName) {
             currentTab = tabName;
@@ -788,6 +1023,8 @@
             // Load data for specific tabs
             if (tabName === 'generator') {
                 renderGeneratorHub();
+            } else if (tabName === 'story') {
+                loadProjectList();
             } else if (tabName === 'database') {
                 loadCharacterList();
                 loadSituationList();
@@ -1418,6 +1655,282 @@
             renderActionSelector();
         }
 
+        // ===== Project Management (V3) =====
+        async function loadProjectList() {
+            const projects = await getAllProjects();
+            const container = document.getElementById('project-list');
+
+            if (projects.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">プロジェクトがありません<br>「➕ 新規プロジェクト」から作成してください</div>';
+                return;
+            }
+
+            container.innerHTML = projects.map(project => `
+                <div class="card p-4 cursor-pointer hover:shadow-lg transition project-card" data-id="${project.id}">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">${project.title}</h3>
+                    <p class="text-sm text-gray-600 line-clamp-3 mb-3">${project.plot || 'プロットなし'}</p>
+                    <div class="text-xs text-gray-400">作成日: ${new Date(project.createdAt).toLocaleDateString()}</div>
+                </div>
+            `).join('');
+
+            // Show project list view
+            document.getElementById('project-list-view').classList.remove('hidden');
+            document.getElementById('project-detail-view').classList.add('hidden');
+        }
+
+        async function openProject(projectId) {
+            currentProjectId = projectId;
+            currentProject = await getProject(projectId);
+
+            // Update UI
+            document.getElementById('project-title-display').textContent = currentProject.title;
+            document.getElementById('project-plot-display').textContent = currentProject.plot || 'プロットの説明がありません';
+
+            // Load style presets
+            document.getElementById('style-monochrome').checked = currentProject.styleMonochrome || false;
+            document.getElementById('style-fullcolor').checked = currentProject.styleFullColor || false;
+            document.getElementById('style-4koma').checked = currentProject.style4Koma || false;
+
+            // Load pages
+            await loadPages(projectId);
+
+            // Switch views
+            document.getElementById('project-list-view').classList.add('hidden');
+            document.getElementById('project-detail-view').classList.remove('hidden');
+        }
+
+        function openProjectModal(projectId = null) {
+            editingProjectId = projectId;
+            const modal = document.getElementById('project-modal');
+            const title = document.getElementById('project-modal-title');
+
+            if (projectId) {
+                title.textContent = 'プロジェクト編集';
+                getProject(projectId).then(project => {
+                    if (project) {
+                        document.getElementById('project-id').value = project.id;
+                        document.getElementById('project-title').value = project.title;
+                        document.getElementById('project-plot').value = project.plot || '';
+                    }
+                });
+            } else {
+                title.textContent = 'プロジェクト作成';
+                document.getElementById('project-form').reset();
+                document.getElementById('project-id').value = '';
+            }
+
+            modal.classList.add('show');
+        }
+
+        async function saveProject(event) {
+            event.preventDefault();
+
+            const projectData = {
+                title: document.getElementById('project-title').value,
+                plot: document.getElementById('project-plot').value
+            };
+
+            if (editingProjectId) {
+                projectData.id = editingProjectId;
+                await updateProject(projectData);
+            } else {
+                const newId = await addProject(projectData);
+                currentProjectId = newId;
+            }
+
+            closeModal();
+            loadProjectList();
+        }
+
+        async function deleteProjectConfirm() {
+            if (!confirm('このプロジェクトと全てのページを削除しますか？')) return;
+
+            // Delete all pages first
+            const pages = await getPagesByProject(currentProjectId);
+            for (const page of pages) {
+                await deletePage(page.id);
+            }
+
+            await deleteProject(currentProjectId);
+            currentProjectId = null;
+            loadProjectList();
+        }
+
+        async function updateProjectStyles() {
+            if (!currentProject) return;
+
+            currentProject.styleMonochrome = document.getElementById('style-monochrome').checked;
+            currentProject.styleFullColor = document.getElementById('style-fullcolor').checked;
+            currentProject.style4Koma = document.getElementById('style-4koma').checked;
+
+            await updateProject(currentProject);
+            loadPages(currentProjectId); // Reload pages to update prompts
+        }
+
+        // ===== Page Management (V3) =====
+        async function loadPages(projectId) {
+            const pages = await getPagesByProject(projectId);
+            const container = document.getElementById('pages-container');
+
+            if (pages.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 py-8">ページがありません<br>「➕ ページ追加」から作成してください</div>';
+                return;
+            }
+
+            container.innerHTML = pages.map((page, index) => `
+                <div class="card p-4 page-accordion" data-page-id="${page.id}">
+                    <div class="flex justify-between items-center cursor-pointer page-header" data-page-id="${page.id}">
+                        <h4 class="font-bold text-gray-800">📄 Page ${index + 1}</h4>
+                        <div class="space-x-2 flex items-center">
+                            <button class="delete-page text-red-500 hover:text-red-700 text-sm" data-page-id="${page.id}">🗑️</button>
+                            <span class="toggle-icon text-gray-400">▼</span>
+                        </div>
+                    </div>
+
+                    <div class="page-content mt-4 ${openPageId === page.id ? '' : 'hidden'}" data-page-id="${page.id}">
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">ページメモ</label>
+                            <textarea class="page-memo w-full px-3 py-2 border rounded-lg text-sm" rows="3" data-page-id="${page.id}">${page.memo || ''}</textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">プロンプトプレビュー</label>
+                            <div class="page-prompt-preview bg-gray-50 p-3 rounded text-xs font-mono whitespace-pre-wrap">${generatePagePrompt(page)}</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">キャラクター選択</label>
+                            <div class="page-character-selector flex flex-wrap gap-2" data-page-id="${page.id}">
+                                ${renderPageCharacterSelector(page)}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-600 mb-1">場所</label>
+                                <select class="page-situation w-full px-2 py-1 border rounded text-sm" data-page-id="${page.id}">
+                                    <option value="">指定なし</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-600 mb-1">行動</label>
+                                <select class="page-action w-full px-2 py-1 border rounded text-sm" data-page-id="${page.id}">
+                                    <option value="">指定なし</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <textarea class="page-custom-action w-full px-3 py-2 border rounded-lg text-sm mt-2" rows="2" placeholder="カスタム行動..." data-page-id="${page.id}">${page.customAction || ''}</textarea>
+
+                        <button class="copy-page-prompt btn-primary text-white px-4 py-2 rounded-lg w-full mt-3 text-sm" data-page-id="${page.id}">
+                            📋 このページのプロンプトをコピー
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Populate situation and action selects
+            const situations = await getAllSituations();
+            const actions = await getAllActions();
+
+            pages.forEach(page => {
+                const situationSelect = container.querySelector(`.page-situation[data-page-id="${page.id}"]`);
+                const actionSelect = container.querySelector(`.page-action[data-page-id="${page.id}"]`);
+
+                situations.forEach(sit => {
+                    const option = document.createElement('option');
+                    option.value = sit.id;
+                    option.textContent = sit.name;
+                    if (page.situationId === sit.id) option.selected = true;
+                    situationSelect.appendChild(option);
+                });
+
+                actions.forEach(act => {
+                    const option = document.createElement('option');
+                    option.value = act.id;
+                    option.textContent = act.name;
+                    if (page.actionId === act.id) option.selected = true;
+                    actionSelect.appendChild(option);
+                });
+            });
+        }
+
+        function renderPageCharacterSelector(page) {
+            // Simple character checkbox list
+            const selectedIds = page.characterIds || [];
+            return ''; // Will be populated dynamically
+        }
+
+        function generatePagePrompt(page) {
+            let parts = [];
+
+            // Add style tags
+            if (currentProject) {
+                if (currentProject.styleMonochrome) parts.push('monochrome, greyscale, comic');
+                else if (currentProject.styleFullColor) parts.push('full color, comic');
+                else if (currentProject.style4Koma) parts.push('4koma, comic');
+            }
+
+            // Character, situation, action will be added here
+            if (page.promptCache) return page.promptCache;
+
+            return parts.join(', ') || 'プロンプトを生成中...';
+        }
+
+        async function addPageToProject() {
+            if (!currentProjectId) return;
+
+            const pages = await getPagesByProject(currentProjectId);
+            const newPage = {
+                projectId: currentProjectId,
+                order: pages.length,
+                memo: '',
+                characterIds: [],
+                situationId: null,
+                actionId: null,
+                customAction: ''
+            };
+
+            await addPage(newPage);
+            loadPages(currentProjectId);
+        }
+
+        async function deletePageConfirm(pageId) {
+            if (!confirm('このページを削除しますか？')) return;
+
+            await deletePage(pageId);
+            loadPages(currentProjectId);
+        }
+
+        async function updatePageData(pageId, field, value) {
+            const pages = await getPagesByProject(currentProjectId);
+            const page = pages.find(p => p.id === pageId);
+            if (!page) return;
+
+            page[field] = value;
+            await updatePage(page);
+        }
+
+        function togglePageAccordion(pageId) {
+            const content = document.querySelector(`.page-content[data-page-id="${pageId}"]`);
+            const icon = document.querySelector(`.page-header[data-page-id="${pageId}"] .toggle-icon`);
+
+            if (content.classList.contains('hidden')) {
+                // Close all other pages
+                document.querySelectorAll('.page-content').forEach(c => c.classList.add('hidden'));
+                document.querySelectorAll('.toggle-icon').forEach(i => i.textContent = '▼');
+
+                // Open this page
+                content.classList.remove('hidden');
+                icon.textContent = '▲';
+                openPageId = pageId;
+            } else {
+                content.classList.add('hidden');
+                icon.textContent = '▼';
+                openPageId = null;
+            }
+        }
+
         // ===== Settings =====
         async function loadSettings() {
             const positivePreset = await getSetting('positivePreset', 'masterpiece, best quality, ultra detailed, 8k resolution');
@@ -1668,6 +2181,66 @@
 
             // Action Form (V2)
             document.getElementById('action-form').addEventListener('submit', saveAction);
+
+            // Story Mode (V3)
+            document.getElementById('add-project-btn').addEventListener('click', () => openProjectModal());
+            document.getElementById('project-form').addEventListener('submit', saveProject);
+            document.getElementById('back-to-projects').addEventListener('click', loadProjectList);
+            document.getElementById('edit-project-btn').addEventListener('click', () => openProjectModal(currentProjectId));
+            document.getElementById('delete-project-btn').addEventListener('click', deleteProjectConfirm);
+            document.getElementById('add-page-btn').addEventListener('click', addPageToProject);
+
+            // Project list click
+            document.getElementById('project-list').addEventListener('click', (e) => {
+                const card = e.target.closest('.project-card');
+                if (card) {
+                    openProject(parseInt(card.dataset.id));
+                }
+            });
+
+            // Style presets
+            document.querySelectorAll('.style-preset').forEach(checkbox => {
+                checkbox.addEventListener('change', updateProjectStyles);
+            });
+
+            // Pages container (delegation)
+            document.getElementById('pages-container').addEventListener('click', (e) => {
+                // Accordion toggle
+                if (e.target.closest('.page-header') && !e.target.classList.contains('delete-page')) {
+                    const pageId = parseInt(e.target.closest('.page-header').dataset.pageId);
+                    togglePageAccordion(pageId);
+                }
+
+                // Delete page
+                if (e.target.classList.contains('delete-page')) {
+                    e.stopPropagation();
+                    deletePageConfirm(parseInt(e.target.dataset.pageId));
+                }
+
+                // Copy page prompt
+                if (e.target.classList.contains('copy-page-prompt')) {
+                    const pageId = parseInt(e.target.dataset.pageId);
+                    // Copy logic here
+                    alert('ページプロンプトコピー機能は実装中です');
+                }
+            });
+
+            // Page data updates (delegation)
+            document.getElementById('pages-container').addEventListener('change', (e) => {
+                if (e.target.classList.contains('page-memo')) {
+                    updatePageData(parseInt(e.target.dataset.pageId), 'memo', e.target.value);
+                } else if (e.target.classList.contains('page-situation')) {
+                    updatePageData(parseInt(e.target.dataset.pageId), 'situationId', parseInt(e.target.value) || null);
+                } else if (e.target.classList.contains('page-action')) {
+                    updatePageData(parseInt(e.target.dataset.pageId), 'actionId', parseInt(e.target.value) || null);
+                }
+            });
+
+            document.getElementById('pages-container').addEventListener('input', (e) => {
+                if (e.target.classList.contains('page-custom-action')) {
+                    updatePageData(parseInt(e.target.dataset.pageId), 'customAction', e.target.value);
+                }
+            });
 
             // Settings
             document.getElementById('save-presets-btn').addEventListener('click', saveSettings);
