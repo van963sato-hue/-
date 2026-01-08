@@ -568,8 +568,8 @@
             const includePositive = document.getElementById('quality-positive-toggle').checked;
             const includeNegative = document.getElementById('quality-negative-toggle').checked;
 
-            const positivePreset = includePositive ? await getSetting('positivePreset', '') : '';
-            const negativePreset = includeNegative ? await getSetting('negativePreset', '') : '';
+            const positivePreset = includePositive ? await getSetting('positivePreset', 'masterpiece, best quality, ultra detailed, 8k resolution') : '';
+            const negativePreset = includeNegative ? await getSetting('negativePreset', 'low quality, worst quality, blurry, bad anatomy, watermark') : '';
 
             const characterPrompts = characterSlots
                 .filter(char => char !== null)
@@ -596,7 +596,20 @@
                     return;
                 }
 
-                await navigator.clipboard.writeText(prompt);
+                // Try clipboard API first
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(prompt);
+                } else {
+                    // Fallback for older browsers
+                    const textarea = document.createElement('textarea');
+                    textarea.value = prompt;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
 
                 const btn = document.getElementById('copy-prompt-btn');
                 const originalText = btn.textContent;
@@ -604,8 +617,12 @@
                 setTimeout(() => {
                     btn.textContent = originalText;
                 }, 2000);
+
+                // Show preview in console for debugging
+                console.log('コピーされたプロンプト:', prompt);
             } catch (err) {
-                alert('クリップボードへのコピーに失敗しました');
+                console.error('コピーエラー:', err);
+                alert('クリップボードへのコピーに失敗しました。\nエラー: ' + err.message + '\n\nHTTPS接続を使用しているか確認してください。');
             }
         }
 
