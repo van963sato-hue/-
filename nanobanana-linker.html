@@ -140,6 +140,59 @@
         .scrollbar-thin::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* V2 Styles */
+        .mode-btn {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .db-subtab {
+            color: #64748b;
+            position: relative;
+        }
+
+        .db-subtab.active {
+            color: #3b82f6;
+        }
+
+        .db-subtab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #3b82f6;
+        }
+
+        .character-card {
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .character-card.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .character-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .situation-btn.active,
+        .action-btn.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="app-gradient min-h-screen">
@@ -168,30 +221,85 @@
 
         <!-- Tab Content -->
         <div id="tab-content">
-            <!-- Generator Hub Tab -->
+            <!-- Generator Hub Tab (V2 Syntax Builder) -->
             <div id="generator-tab" class="tab-content fade-in">
+                <!-- Mode Selection -->
+                <div class="card p-4 mb-6">
+                    <div class="flex justify-center space-x-4">
+                        <button class="mode-btn active px-8 py-3 rounded-lg font-semibold transition" data-mode="solo">
+                            👤 Solo
+                        </button>
+                        <button class="mode-btn px-8 py-3 rounded-lg font-semibold transition" data-mode="duo">
+                            👥 Duo/Group
+                        </button>
+                        <button class="mode-btn px-8 py-3 rounded-lg font-semibold transition" data-mode="comic">
+                            📖 Comic
+                        </button>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Character Slots -->
-                    <div class="lg:col-span-2">
+                    <!-- Builder Section -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Who? Character Selection -->
                         <div class="card p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <h2 class="text-2xl font-bold text-gray-800">キャラクター選択</h2>
-                                <button id="add-slot-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
-                                    ➕ スロット追加
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">👤 Who? （キャラクター）</h2>
+                            <div id="character-selector" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                <div class="text-center text-gray-400 col-span-full py-8">
+                                    キャラクターを登録してください
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Where? Situation Selection -->
+                        <div class="card p-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">📍 Where? （場所）</h2>
+                            <div id="situation-selector" class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <button class="situation-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">
+                                    指定なし
                                 </button>
                             </div>
-                            <div id="character-slots" class="space-y-4"></div>
+                        </div>
+
+                        <!-- Doing What? Action Selection -->
+                        <div class="card p-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4">🎬 Doing What? （行動）</h2>
+                            <div id="action-selector" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                                <button class="action-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition" data-id="">
+                                    指定なし
+                                </button>
+                            </div>
+                            <label class="block text-gray-700 font-semibold mb-2">フリー入力（日本語可）</label>
+                            <textarea id="custom-action-input" rows="2" placeholder="例：丸々しているところ、祈っている、など"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                        </div>
+
+                        <!-- Options (Duo Mode) -->
+                        <div class="card p-6 hidden" id="duo-options">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">オプション</h3>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="checkbox" id="auto-person-tags" checked class="w-5 h-5 rounded">
+                                <span class="text-gray-700">人数タグを自動追加（2boys, multiple girlsなど）</span>
+                            </label>
                         </div>
                     </div>
 
-                    <!-- Reference Images & Actions -->
+                    <!-- Preview & Actions Section -->
                     <div class="space-y-6">
+                        <!-- Preview -->
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">プレビュー</h3>
+                            <div id="prompt-preview" class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700 min-h-32 max-h-64 overflow-y-auto scrollbar-thin font-mono whitespace-pre-wrap">
+                                プロンプトがここに表示されます
+                            </div>
+                        </div>
+
                         <!-- Reference Images -->
                         <div class="card p-6">
                             <h3 class="text-xl font-bold text-gray-800 mb-4">参考画像</h3>
-                            <div id="reference-images" class="grid grid-cols-3 gap-2 max-h-96 overflow-y-auto scrollbar-thin">
-                                <div class="text-center text-gray-400 col-span-3 py-8">
-                                    キャラを選択してください
+                            <div id="reference-images" class="grid grid-cols-3 gap-2 max-h-64 overflow-y-auto scrollbar-thin">
+                                <div class="text-center text-gray-400 col-span-3 py-8 text-sm">
+                                    キャラを選択すると表示されます
                                 </div>
                             </div>
                         </div>
@@ -212,11 +320,11 @@
                             <div class="space-y-3">
                                 <label class="flex items-center space-x-3 cursor-pointer">
                                     <input type="checkbox" id="quality-positive-toggle" checked class="w-5 h-5 rounded">
-                                    <span class="text-gray-700">高画質化タグ (Positive)</span>
+                                    <span class="text-gray-700 text-sm">高画質化タグ (Positive)</span>
                                 </label>
                                 <label class="flex items-center space-x-3 cursor-pointer">
                                     <input type="checkbox" id="quality-negative-toggle" checked class="w-5 h-5 rounded">
-                                    <span class="text-gray-700">ネガティブタグ (Negative)</span>
+                                    <span class="text-gray-700 text-sm">ネガティブタグ (Negative)</span>
                                 </label>
                             </div>
                         </div>
@@ -224,25 +332,68 @@
                 </div>
             </div>
 
-            <!-- Character DB Tab -->
+            <!-- Database Tab -->
             <div id="database-tab" class="tab-content hidden">
-                <div class="card p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">キャラクターデータベース</h2>
-                        <div class="space-x-2">
-                            <button id="import-json-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition">
-                                📥 Import JSON
-                            </button>
-                            <button id="export-json-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition">
-                                📤 Export JSON
-                            </button>
-                            <button id="add-character-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                <!-- Sub-tabs for Database -->
+                <div class="card mb-6 overflow-hidden">
+                    <div class="flex border-b">
+                        <button class="db-subtab active flex-1 py-3 font-semibold transition" data-subtab="characters">
+                            👥 Characters
+                        </button>
+                        <button class="db-subtab flex-1 py-3 font-semibold transition" data-subtab="situations">
+                            📍 Situations
+                        </button>
+                        <button class="db-subtab flex-1 py-3 font-semibold transition" data-subtab="actions">
+                            🎬 Actions
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Characters Sub-tab -->
+                <div id="characters-subtab" class="db-subtab-content">
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">キャラクターデータベース</h2>
+                            <div class="space-x-2">
+                                <button id="import-json-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition">
+                                    📥 Import JSON
+                                </button>
+                                <button id="export-json-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition">
+                                    📤 Export JSON
+                                </button>
+                                <button id="add-character-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                                    ➕ 新規登録
+                                </button>
+                            </div>
+                        </div>
+                        <div id="character-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                </div>
+
+                <!-- Situations Sub-tab -->
+                <div id="situations-subtab" class="db-subtab-content hidden">
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">シチュエーション（場所）データベース</h2>
+                            <button id="add-situation-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
                                 ➕ 新規登録
                             </button>
                         </div>
+                        <div id="situation-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                     </div>
+                </div>
 
-                    <div id="character-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                <!-- Actions Sub-tab -->
+                <div id="actions-subtab" class="db-subtab-content hidden">
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">アクション（行動）データベース</h2>
+                            <button id="add-action-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                                ➕ 新規登録
+                            </button>
+                        </div>
+                        <div id="action-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
                 </div>
             </div>
 
@@ -335,10 +486,78 @@
         </div>
     </div>
 
+    <!-- Situation Edit Modal -->
+    <div id="situation-modal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800" id="situation-modal-title">シチュエーション登録</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+
+            <form id="situation-form" class="space-y-4">
+                <input type="hidden" id="situation-id">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">名前（ラベル）</label>
+                    <input type="text" id="situation-name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：私の部屋">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">タグ（Prompts）</label>
+                    <textarea id="situation-tags" rows="3" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="bedroom, indoor, white bed, curtain"></textarea>
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="btn-primary flex-1 text-white px-6 py-3 rounded-lg font-semibold">
+                        💾 保存
+                    </button>
+                    <button type="button" class="close-modal bg-gray-300 hover:bg-gray-400 flex-1 text-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                        キャンセル
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Action Edit Modal -->
+    <div id="action-modal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800" id="action-modal-title">アクション登録</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+
+            <form id="action-form" class="space-y-4">
+                <input type="hidden" id="action-id">
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">名前（日本語ラベル）</label>
+                    <input type="text" id="action-name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：祈っている">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">タグ（英語Prompts）</label>
+                    <textarea id="action-tags" rows="3" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="praying, clasped hands, closed eyes"></textarea>
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button type="submit" class="btn-primary flex-1 text-white px-6 py-3 rounded-lg font-semibold">
+                        💾 保存
+                    </button>
+                    <button type="button" class="close-modal bg-gray-300 hover:bg-gray-400 flex-1 text-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                        キャンセル
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // ===== IndexedDB Setup =====
         const DB_NAME = 'NanobananaLinkerDB';
-        const DB_VERSION = 1;
+        const DB_VERSION = 2;
         let db;
 
         function initDB() {
@@ -358,6 +577,18 @@
                     if (!db.objectStoreNames.contains('characters')) {
                         const characterStore = db.createObjectStore('characters', { keyPath: 'id', autoIncrement: true });
                         characterStore.createIndex('name', 'name', { unique: false });
+                    }
+
+                    // Situations Store (V2)
+                    if (!db.objectStoreNames.contains('situations')) {
+                        const situationStore = db.createObjectStore('situations', { keyPath: 'id', autoIncrement: true });
+                        situationStore.createIndex('name', 'name', { unique: false });
+                    }
+
+                    // Actions Store (V2)
+                    if (!db.objectStoreNames.contains('actions')) {
+                        const actionStore = db.createObjectStore('actions', { keyPath: 'id', autoIncrement: true });
+                        actionStore.createIndex('name', 'name', { unique: false });
                     }
 
                     // Settings Store
@@ -413,6 +644,96 @@
             });
         }
 
+        // ===== Situation Operations (V2) =====
+        function addSituation(situation) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['situations'], 'readwrite');
+                const store = transaction.objectStore('situations');
+                const request = store.add(situation);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateSituation(situation) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['situations'], 'readwrite');
+                const store = transaction.objectStore('situations');
+                const request = store.put(situation);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteSituation(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['situations'], 'readwrite');
+                const store = transaction.objectStore('situations');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllSituations() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['situations'], 'readonly');
+                const store = transaction.objectStore('situations');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ===== Action Operations (V2) =====
+        function addAction(action) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['actions'], 'readwrite');
+                const store = transaction.objectStore('actions');
+                const request = store.add(action);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateAction(action) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['actions'], 'readwrite');
+                const store = transaction.objectStore('actions');
+                const request = store.put(action);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteAction(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['actions'], 'readwrite');
+                const store = transaction.objectStore('actions');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllActions() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['actions'], 'readonly');
+                const store = transaction.objectStore('actions');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
         function saveSetting(key, value) {
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['settings'], 'readwrite');
@@ -437,13 +758,19 @@
             });
         }
 
-        // ===== UI State =====
+        // ===== UI State (V2) =====
         let currentTab = 'generator';
-        let characterSlots = [null];
+        let currentMode = 'solo'; // solo, duo, comic
+        let currentDBSubtab = 'characters';
+        let selectedCharacters = []; // Array of character objects
+        let selectedSituation = null;
+        let selectedAction = null;
         let selectedImages = [];
         let editingCharacterId = null;
+        let editingSituationId = null;
+        let editingActionId = null;
 
-        // ===== Tab Navigation =====
+        // ===== Tab Navigation (V2) =====
         function switchTab(tabName) {
             currentTab = tabName;
 
@@ -459,95 +786,124 @@
             document.getElementById(`${tabName}-tab`).classList.remove('hidden');
 
             // Load data for specific tabs
-            if (tabName === 'database') {
+            if (tabName === 'generator') {
+                renderGeneratorHub();
+            } else if (tabName === 'database') {
                 loadCharacterList();
+                loadSituationList();
+                loadActionList();
             } else if (tabName === 'settings') {
                 loadSettings();
             }
         }
 
-        // ===== Character Slots =====
-        function renderCharacterSlots() {
-            const container = document.getElementById('character-slots');
-            container.innerHTML = '';
+        function switchDBSubtab(subtab) {
+            currentDBSubtab = subtab;
 
-            characterSlots.forEach((character, index) => {
-                const slot = document.createElement('div');
-                slot.className = 'character-slot p-4 ' + (character ? 'active' : '');
+            // Update subtab buttons
+            document.querySelectorAll('.db-subtab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.subtab === subtab);
+            });
 
-                slot.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1">
-                            <label class="block text-sm font-semibold text-gray-600 mb-2">スロット ${index + 1}</label>
-                            <select class="character-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" data-index="${index}">
-                                <option value="">-- キャラクターを選択 --</option>
-                            </select>
-                        </div>
-                        ${index > 0 ? `<button class="remove-slot ml-4 text-red-500 hover:text-red-700 text-xl" data-index="${index}">🗑️</button>` : ''}
+            // Update subtab content
+            document.querySelectorAll('.db-subtab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${subtab}-subtab`).classList.remove('hidden');
+        }
+
+        // ===== Mode Switching (V2) =====
+        function switchMode(mode) {
+            currentMode = mode;
+
+            // Update mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+
+            // Show/hide duo options
+            if (mode === 'duo') {
+                document.getElementById('duo-options').classList.remove('hidden');
+            } else {
+                document.getElementById('duo-options').classList.add('hidden');
+            }
+
+            // Update UI based on mode
+            if (mode === 'solo') {
+                // Solo mode: clear multiple selections, keep only first
+                if (selectedCharacters.length > 1) {
+                    selectedCharacters = [selectedCharacters[0]];
+                }
+            }
+
+            renderCharacterSelector();
+            updatePromptPreview();
+        }
+
+        // ===== Character Selection (V2) =====
+        async function renderCharacterSelector() {
+            const container = document.getElementById('character-selector');
+            const characters = await getAllCharacters();
+
+            if (characters.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 col-span-full py-8">キャラクターを登録してください</div>';
+                return;
+            }
+
+            container.innerHTML = characters.map(char => {
+                const isSelected = selectedCharacters.some(c => c.id === char.id);
+                const thumbnail = char.images && char.images[0] ? char.images[0] : '';
+
+                return `
+                    <div class="character-card card p-2 text-center ${isSelected ? 'selected' : ''}" data-id="${char.id}">
+                        ${thumbnail ? `<img src="${thumbnail}" alt="${char.name}" class="w-full h-20 object-cover rounded mb-2">` : '<div class="w-full h-20 bg-gray-200 rounded mb-2 flex items-center justify-center text-3xl">👤</div>'}
+                        <div class="text-sm font-semibold text-gray-800 truncate">${char.name}</div>
                     </div>
                 `;
+            }).join('');
 
-                container.appendChild(slot);
-            });
-
-            // Populate select options
-            getAllCharacters().then(characters => {
-                document.querySelectorAll('.character-select').forEach((select, index) => {
-                    characters.forEach(char => {
-                        const option = document.createElement('option');
-                        option.value = char.id;
-                        option.textContent = char.name;
-                        if (characterSlots[index] && characterSlots[index].id === char.id) {
-                            option.selected = true;
-                        }
-                        select.appendChild(option);
-                    });
-                });
-            });
-
+            // Update reference images
             updateReferenceImages();
         }
 
-        function addCharacterSlot() {
-            if (characterSlots.length >= 10) {
-                alert('最大10スロットまでです');
-                return;
+        async function toggleCharacterSelection(characterId) {
+            const characters = await getAllCharacters();
+            const character = characters.find(c => c.id === parseInt(characterId));
+
+            if (!character) return;
+
+            const index = selectedCharacters.findIndex(c => c.id === character.id);
+
+            if (index >= 0) {
+                // Deselect
+                selectedCharacters.splice(index, 1);
+            } else {
+                // Select
+                if (currentMode === 'solo') {
+                    // Solo mode: replace selection
+                    selectedCharacters = [character];
+                } else {
+                    // Duo/Comic mode: add selection
+                    selectedCharacters.push(character);
+                }
             }
-            characterSlots.push(null);
-            renderCharacterSlots();
-        }
 
-        function removeCharacterSlot(index) {
-            characterSlots.splice(index, 1);
-            renderCharacterSlots();
-        }
-
-        function selectCharacter(index, characterId) {
-            if (!characterId) {
-                characterSlots[index] = null;
-                updateReferenceImages();
-                return;
-            }
-
-            getAllCharacters().then(characters => {
-                const character = characters.find(c => c.id === parseInt(characterId));
-                characterSlots[index] = character || null;
-                updateReferenceImages();
-            });
+            renderCharacterSelector();
+            updatePromptPreview();
         }
 
         function updateReferenceImages() {
             const container = document.getElementById('reference-images');
             const allImages = [];
 
-            characterSlots.forEach(char => {
+            selectedCharacters.forEach(char => {
                 if (char && char.images) {
                     allImages.push(...char.images.map(img => ({ char: char.name, data: img })));
                 }
             });
 
             if (allImages.length === 0) {
-                container.innerHTML = '<div class="text-center text-gray-400 col-span-3 py-8">キャラを選択してください</div>';
+                container.innerHTML = '<div class="text-center text-gray-400 col-span-3 py-8 text-sm">キャラを選択すると表示されます</div>';
                 return;
             }
 
@@ -563,7 +919,71 @@
             selectedImages = allImages;
         }
 
-        // ===== Prompt Generation =====
+        // ===== Situation Selection (V2) =====
+        async function renderSituationSelector() {
+            const container = document.getElementById('situation-selector');
+            const situations = await getAllSituations();
+
+            let html = '<button class="situation-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition' + (!selectedSituation ? ' active' : '') + '" data-id="">指定なし</button>';
+
+            html += situations.map(situation => `
+                <button class="situation-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition ${selectedSituation && selectedSituation.id === situation.id ? 'active' : ''}" data-id="${situation.id}">
+                    ${situation.name}
+                </button>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        async function selectSituation(situationId) {
+            if (!situationId) {
+                selectedSituation = null;
+            } else {
+                const situations = await getAllSituations();
+                selectedSituation = situations.find(s => s.id === parseInt(situationId)) || null;
+            }
+
+            renderSituationSelector();
+            updatePromptPreview();
+        }
+
+        // ===== Action Selection (V2) =====
+        async function renderActionSelector() {
+            const container = document.getElementById('action-selector');
+            const actions = await getAllActions();
+
+            let html = '<button class="action-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition' + (!selectedAction ? ' active' : '') + '" data-id="">指定なし</button>';
+
+            html += actions.map(action => `
+                <button class="action-btn p-3 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition ${selectedAction && selectedAction.id === action.id ? 'active' : ''}" data-id="${action.id}">
+                    ${action.name}
+                </button>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        async function selectAction(actionId) {
+            if (!actionId) {
+                selectedAction = null;
+            } else {
+                const actions = await getAllActions();
+                selectedAction = actions.find(a => a.id === parseInt(actionId)) || null;
+            }
+
+            renderActionSelector();
+            updatePromptPreview();
+        }
+
+        // ===== Generator Hub Init (V2) =====
+        async function renderGeneratorHub() {
+            await renderCharacterSelector();
+            await renderSituationSelector();
+            await renderActionSelector();
+            updatePromptPreview();
+        }
+
+        // ===== Prompt Generation (V2) =====
         async function generatePrompt() {
             const includePositive = document.getElementById('quality-positive-toggle').checked;
             const includeNegative = document.getElementById('quality-negative-toggle').checked;
@@ -571,12 +991,76 @@
             const positivePreset = includePositive ? await getSetting('positivePreset', 'masterpiece, best quality, ultra detailed, 8k resolution') : '';
             const negativePreset = includeNegative ? await getSetting('negativePreset', 'low quality, worst quality, blurry, bad anatomy, watermark') : '';
 
-            const characterPrompts = characterSlots
-                .filter(char => char !== null)
-                .map(char => `${char.trigger}, ${char.appearance}`)
-                .join(', ');
+            let promptParts = [];
 
-            const positivePrompt = [positivePreset, characterPrompts]
+            // Mode-specific logic
+            if (currentMode === 'solo') {
+                // Solo mode: [quality] + [char tags] + [char appearance] + [situation] + [action]
+                if (selectedCharacters.length > 0) {
+                    const char = selectedCharacters[0];
+                    promptParts.push('1boy' in char.trigger || '1girl' in char.trigger ? '' : '1girl'); // Default to 1girl if not specified
+                    promptParts.push('solo');
+                    promptParts.push(char.trigger);
+                    promptParts.push(char.appearance);
+                }
+            } else if (currentMode === 'duo') {
+                // Duo/Group mode: [person tags] + [char tags] + [char appearances] + [situation] + [action]
+                if (selectedCharacters.length > 0) {
+                    const autoPersonTags = document.getElementById('auto-person-tags').checked;
+
+                    if (autoPersonTags) {
+                        // Generate person count tags
+                        const charCount = selectedCharacters.length;
+                        if (charCount === 2) {
+                            const genders = selectedCharacters.map(c => {
+                                if (c.trigger.includes('boy') || c.trigger.includes('male')) return 'boy';
+                                if (c.trigger.includes('girl') || c.trigger.includes('female')) return 'girl';
+                                return 'girl'; // default
+                            });
+
+                            if (genders.every(g => g === 'boy')) promptParts.push('2boys');
+                            else if (genders.every(g => g === 'girl')) promptParts.push('2girls');
+                            else promptParts.push('1boy, 1girl');
+                        } else if (charCount > 2) {
+                            promptParts.push('multiple girls'); // Simplification for 3+
+                        }
+                    }
+
+                    // Add each character's tags
+                    selectedCharacters.forEach(char => {
+                        promptParts.push(char.trigger);
+                        promptParts.push(char.appearance);
+                    });
+                }
+            } else if (currentMode === 'comic') {
+                // Comic mode: [comic tags] + [char tags] + [theme/action]
+                promptParts.push('comic, monochrome');
+
+                selectedCharacters.forEach(char => {
+                    promptParts.push(char.trigger);
+                });
+            }
+
+            // Add situation
+            if (selectedSituation) {
+                promptParts.push(selectedSituation.tags);
+            }
+
+            // Add action
+            if (selectedAction) {
+                promptParts.push(selectedAction.tags);
+            }
+
+            // Add custom action input
+            const customAction = document.getElementById('custom-action-input').value.trim();
+            if (customAction) {
+                promptParts.push(customAction);
+            }
+
+            // Combine all parts
+            const characterPrompt = promptParts.filter(p => p).join(', ');
+
+            const positivePrompt = [positivePreset, characterPrompt]
                 .filter(p => p.trim())
                 .join(', ');
 
@@ -585,6 +1069,12 @@
                 : positivePrompt;
 
             return fullPrompt;
+        }
+
+        function updatePromptPreview() {
+            generatePrompt().then(prompt => {
+                document.getElementById('prompt-preview').textContent = prompt || 'プロンプトがここに表示されます';
+            });
         }
 
         async function copyPrompt() {
@@ -765,7 +1255,7 @@
 
             closeModal();
             loadCharacterList();
-            renderCharacterSlots();
+            renderGeneratorHub();
         }
 
         async function deleteCharacterConfirm(id) {
@@ -773,7 +1263,159 @@
 
             await deleteCharacter(id);
             loadCharacterList();
-            renderCharacterSlots();
+            renderGeneratorHub();
+        }
+
+        // ===== Situation List (V2) =====
+        async function loadSituationList() {
+            const situations = await getAllSituations();
+            const container = document.getElementById('situation-list');
+
+            if (situations.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">シチュエーションが登録されていません</div>';
+                return;
+            }
+
+            container.innerHTML = situations.map(situation => `
+                <div class="card p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-gray-800">${situation.name}</h3>
+                        <div class="space-x-2">
+                            <button class="edit-situation text-blue-500 hover:text-blue-700" data-id="${situation.id}">✏️</button>
+                            <button class="delete-situation text-red-500 hover:text-red-700" data-id="${situation.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">${situation.tags}</p>
+                </div>
+            `).join('');
+        }
+
+        function openSituationModal(situationId = null) {
+            editingSituationId = situationId;
+            const modal = document.getElementById('situation-modal');
+            const title = document.getElementById('situation-modal-title');
+
+            if (situationId) {
+                title.textContent = 'シチュエーション編集';
+                getAllSituations().then(situations => {
+                    const situation = situations.find(s => s.id === situationId);
+                    if (situation) {
+                        document.getElementById('situation-id').value = situation.id;
+                        document.getElementById('situation-name').value = situation.name;
+                        document.getElementById('situation-tags').value = situation.tags;
+                    }
+                });
+            } else {
+                title.textContent = 'シチュエーション登録';
+                document.getElementById('situation-form').reset();
+                document.getElementById('situation-id').value = '';
+            }
+
+            modal.classList.add('show');
+        }
+
+        async function saveSituation(event) {
+            event.preventDefault();
+
+            const situationData = {
+                name: document.getElementById('situation-name').value,
+                tags: document.getElementById('situation-tags').value
+            };
+
+            if (editingSituationId) {
+                situationData.id = editingSituationId;
+                await updateSituation(situationData);
+            } else {
+                await addSituation(situationData);
+            }
+
+            closeModal();
+            loadSituationList();
+            renderSituationSelector();
+        }
+
+        async function deleteSituationConfirm(id) {
+            if (!confirm('このシチュエーションを削除しますか？')) return;
+
+            await deleteSituation(id);
+            loadSituationList();
+            renderSituationSelector();
+        }
+
+        // ===== Action List (V2) =====
+        async function loadActionList() {
+            const actions = await getAllActions();
+            const container = document.getElementById('action-list');
+
+            if (actions.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">アクションが登録されていません</div>';
+                return;
+            }
+
+            container.innerHTML = actions.map(action => `
+                <div class="card p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-bold text-lg text-gray-800">${action.name}</h3>
+                        <div class="space-x-2">
+                            <button class="edit-action text-blue-500 hover:text-blue-700" data-id="${action.id}">✏️</button>
+                            <button class="delete-action text-red-500 hover:text-red-700" data-id="${action.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">${action.tags}</p>
+                </div>
+            `).join('');
+        }
+
+        function openActionModal(actionId = null) {
+            editingActionId = actionId;
+            const modal = document.getElementById('action-modal');
+            const title = document.getElementById('action-modal-title');
+
+            if (actionId) {
+                title.textContent = 'アクション編集';
+                getAllActions().then(actions => {
+                    const action = actions.find(a => a.id === actionId);
+                    if (action) {
+                        document.getElementById('action-id').value = action.id;
+                        document.getElementById('action-name').value = action.name;
+                        document.getElementById('action-tags').value = action.tags;
+                    }
+                });
+            } else {
+                title.textContent = 'アクション登録';
+                document.getElementById('action-form').reset();
+                document.getElementById('action-id').value = '';
+            }
+
+            modal.classList.add('show');
+        }
+
+        async function saveAction(event) {
+            event.preventDefault();
+
+            const actionData = {
+                name: document.getElementById('action-name').value,
+                tags: document.getElementById('action-tags').value
+            };
+
+            if (editingActionId) {
+                actionData.id = editingActionId;
+                await updateAction(actionData);
+            } else {
+                await addAction(actionData);
+            }
+
+            closeModal();
+            loadActionList();
+            renderActionSelector();
+        }
+
+        async function deleteActionConfirm(id) {
+            if (!confirm('このアクションを削除しますか？')) return;
+
+            await deleteAction(id);
+            loadActionList();
+            renderActionSelector();
         }
 
         // ===== Settings =====
@@ -800,15 +1442,19 @@
             }, 2000);
         }
 
-        // ===== Import/Export =====
+        // ===== Import/Export (V2) =====
         async function exportJSON() {
             const characters = await getAllCharacters();
+            const situations = await getAllSituations();
+            const actions = await getAllActions();
             const positivePreset = await getSetting('positivePreset', '');
             const negativePreset = await getSetting('negativePreset', '');
 
             const data = {
-                version: 1,
+                version: 2,
                 characters,
+                situations,
+                actions,
                 settings: {
                     positivePreset,
                     negativePreset
@@ -819,7 +1465,7 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `nanobanana-backup-${Date.now()}.json`;
+            link.download = `nanobanana-v2-backup-${Date.now()}.json`;
             link.click();
             URL.revokeObjectURL(url);
         }
@@ -841,7 +1487,12 @@
                         throw new Error('Invalid JSON format');
                     }
 
-                    if (!confirm(`${data.characters.length}件のキャラクターをインポートします。よろしいですか？`)) {
+                    let message = `${data.characters.length}件のキャラクター`;
+                    if (data.situations) message += `, ${data.situations.length}件のシチュエーション`;
+                    if (data.actions) message += `, ${data.actions.length}件のアクション`;
+                    message += 'をインポートします。よろしいですか？';
+
+                    if (!confirm(message)) {
                         return;
                     }
 
@@ -851,10 +1502,36 @@
                         await deleteCharacter(char.id);
                     }
 
+                    const situations = await getAllSituations();
+                    for (const sit of situations) {
+                        await deleteSituation(sit.id);
+                    }
+
+                    const actions = await getAllActions();
+                    for (const act of actions) {
+                        await deleteAction(act.id);
+                    }
+
                     // Import characters
                     for (const char of data.characters) {
-                        delete char.id; // Remove ID to create new entries
+                        delete char.id;
                         await addCharacter(char);
+                    }
+
+                    // Import situations (V2)
+                    if (data.situations) {
+                        for (const sit of data.situations) {
+                            delete sit.id;
+                            await addSituation(sit);
+                        }
+                    }
+
+                    // Import actions (V2)
+                    if (data.actions) {
+                        for (const act of data.actions) {
+                            delete act.id;
+                            await addAction(act);
+                        }
                     }
 
                     // Import settings
@@ -865,7 +1542,9 @@
 
                     alert('インポートが完了しました');
                     loadCharacterList();
-                    renderCharacterSlots();
+                    loadSituationList();
+                    loadActionList();
+                    renderGeneratorHub();
                 } catch (err) {
                     alert('インポートに失敗しました: ' + err.message);
                 }
@@ -874,7 +1553,7 @@
             input.click();
         }
 
-        // ===== Event Listeners =====
+        // ===== Event Listeners (V2) =====
         document.addEventListener('DOMContentLoaded', async () => {
             await initDB();
 
@@ -883,23 +1562,51 @@
                 btn.addEventListener('click', () => switchTab(btn.dataset.tab));
             });
 
-            // Generator Hub
-            document.getElementById('add-slot-btn').addEventListener('click', addCharacterSlot);
+            // Database sub-tabs (V2)
+            document.querySelectorAll('.db-subtab').forEach(btn => {
+                btn.addEventListener('click', () => switchDBSubtab(btn.dataset.subtab));
+            });
+
+            // Mode selection (V2)
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+            });
+
+            // Character selection (V2)
+            document.getElementById('character-selector').addEventListener('click', (e) => {
+                const card = e.target.closest('.character-card');
+                if (card) {
+                    toggleCharacterSelection(card.dataset.id);
+                }
+            });
+
+            // Situation selection (V2)
+            document.getElementById('situation-selector').addEventListener('click', (e) => {
+                if (e.target.classList.contains('situation-btn')) {
+                    selectSituation(e.target.dataset.id);
+                }
+            });
+
+            // Action selection (V2)
+            document.getElementById('action-selector').addEventListener('click', (e) => {
+                if (e.target.classList.contains('action-btn')) {
+                    selectAction(e.target.dataset.id);
+                }
+            });
+
+            // Custom action input (V2)
+            document.getElementById('custom-action-input').addEventListener('input', updatePromptPreview);
+
+            // Quality toggle (V2)
+            document.getElementById('quality-positive-toggle').addEventListener('change', updatePromptPreview);
+            document.getElementById('quality-negative-toggle').addEventListener('change', updatePromptPreview);
+            document.getElementById('auto-person-tags')?.addEventListener('change', updatePromptPreview);
+
+            // Copy & Save
             document.getElementById('copy-prompt-btn').addEventListener('click', copyPrompt);
             document.getElementById('save-images-btn').addEventListener('click', saveImages);
 
-            document.getElementById('character-slots').addEventListener('change', (e) => {
-                if (e.target.classList.contains('character-select')) {
-                    selectCharacter(parseInt(e.target.dataset.index), e.target.value);
-                }
-            });
-
-            document.getElementById('character-slots').addEventListener('click', (e) => {
-                if (e.target.classList.contains('remove-slot')) {
-                    removeCharacterSlot(parseInt(e.target.dataset.index));
-                }
-            });
-
+            // Reference images
             document.getElementById('reference-images').addEventListener('click', (e) => {
                 if (e.target.classList.contains('image-preview')) {
                     const index = parseInt(e.target.dataset.index);
@@ -922,6 +1629,28 @@
                 }
             });
 
+            // Situation DB (V2)
+            document.getElementById('add-situation-btn').addEventListener('click', () => openSituationModal());
+
+            document.getElementById('situation-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-situation')) {
+                    openSituationModal(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('delete-situation')) {
+                    deleteSituationConfirm(parseInt(e.target.dataset.id));
+                }
+            });
+
+            // Action DB (V2)
+            document.getElementById('add-action-btn').addEventListener('click', () => openActionModal());
+
+            document.getElementById('action-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-action')) {
+                    openActionModal(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('delete-action')) {
+                    deleteActionConfirm(parseInt(e.target.dataset.id));
+                }
+            });
+
             // Character Form
             document.getElementById('character-form').addEventListener('submit', saveCharacter);
             document.getElementById('character-images').addEventListener('change', (e) => {
@@ -933,6 +1662,12 @@
                     e.target.parentElement.remove();
                 }
             });
+
+            // Situation Form (V2)
+            document.getElementById('situation-form').addEventListener('submit', saveSituation);
+
+            // Action Form (V2)
+            document.getElementById('action-form').addEventListener('submit', saveAction);
 
             // Settings
             document.getElementById('save-presets-btn').addEventListener('click', saveSettings);
@@ -948,8 +1683,8 @@
                 });
             });
 
-            // Initialize
-            renderCharacterSlots();
+            // Initialize (V2)
+            await renderGeneratorHub();
             loadSettings();
         });
 
