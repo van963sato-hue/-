@@ -317,6 +317,21 @@
                             </button>
                         </div>
 
+                        <!-- Output Format (V4) -->
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">出力形式 (V4)</h3>
+                            <select id="output-format" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 mb-3">
+                                <option value="standard">📋 Standard Tags (英語タグ)</option>
+                                <option value="simple-jp">🇯🇵 Simple JP (日本語)</option>
+                                <option value="natural">📝 Natural Prompt (英文)</option>
+                            </select>
+
+                            <label class="flex items-center space-x-3 cursor-pointer p-3 bg-yellow-50 rounded-lg border-2 border-yellow-300">
+                                <input type="checkbox" id="strict-source-mode" class="w-5 h-5 rounded">
+                                <span class="text-gray-800 text-sm font-semibold">🔒 Strict Source Mode（画像を唯一のソースにする）</span>
+                            </label>
+                        </div>
+
                         <!-- Quality Presets -->
                         <div class="card p-6">
                             <h3 class="text-xl font-bold text-gray-800 mb-4">品質設定</h3>
@@ -496,44 +511,143 @@
         </div>
     </div>
 
-    <!-- Character Edit Modal -->
+    <!-- Character Edit Modal (V4 Builder) -->
     <div id="character-modal" class="modal">
-        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto scrollbar-thin">
+        <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto scrollbar-thin">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold text-gray-800" id="modal-title">キャラクター登録</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="modal-title">キャラクター・ビルダー</h3>
                 <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
             </div>
 
-            <form id="character-form" class="space-y-4">
+            <form id="character-form" class="space-y-6">
                 <input type="hidden" id="character-id">
 
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">名前 (Name)</label>
-                    <input type="text" id="character-name" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <!-- Basic Info Section -->
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                        <span class="text-2xl mr-2">📝</span> 基本情報
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">名前 (Name)</label>
+                            <input type="text" id="character-name" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="例：カミル">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">種族 (Species)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="species-jp"
+                                    class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="日本語: 天使">
+                                <input type="text" id="species-en"
+                                    class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="English: angel">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-gray-700 font-semibold mb-2">性別 (Gender)</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="gender" value="male" class="mr-2">
+                                <span>🔵 男性 (Male)</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="gender" value="female" class="mr-2">
+                                <span>🔴 女性 (Female)</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="gender" value="androgynous" class="mr-2" checked>
+                                <span>⚪ 中性的 (Androgynous)</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">呼び出しタグ (Trigger Words)</label>
-                    <input type="text" id="character-trigger" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="character_name, specific_tag">
+                <!-- Appearance Parts Section -->
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                        <span class="text-2xl mr-2">✨</span> 外見パーツ
+                    </h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">髪型 (Hair Style)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="hair-jp"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="ロングヘア">
+                                <input type="text" id="hair-en"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="long hair">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">髪色 (Hair Color)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="haircolor-jp"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="薄茶色">
+                                <input type="text" id="haircolor-en"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="light brown">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">目の色 (Eye Color)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="eyes-jp"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="青い目">
+                                <input type="text" id="eyes-en"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="blue eyes">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">服装 (Clothes)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="clothes-jp"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="軍服">
+                                <input type="text" id="clothes-en"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="military uniform">
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">アクセサリー (Accessories)</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="accessories-jp"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="鍵のネックレス">
+                                <input type="text" id="accessories-en"
+                                    class="px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500"
+                                    placeholder="key necklace">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">外見プロンプト (Appearance)</label>
-                    <textarea id="character-appearance" rows="4" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="long hair, blue eyes, school uniform..."></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">参考画像（複数選択可）</label>
+                <!-- Reference Images -->
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                        <span class="text-2xl mr-2">🖼️</span> 参考画像
+                    </h4>
                     <input type="file" id="character-images" multiple accept="image/*"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     <div id="image-preview-container" class="grid grid-cols-4 gap-2 mt-3"></div>
                 </div>
 
+                <!-- Action Buttons -->
                 <div class="flex space-x-3 pt-4">
                     <button type="submit" class="btn-primary flex-1 text-white px-6 py-3 rounded-lg font-semibold">
                         💾 保存
@@ -1005,6 +1119,10 @@
         let editingProjectId = null;
         let openPageId = null; // Currently open accordion page
 
+        // ===== UI State (V4) =====
+        let currentOutputFormat = 'standard'; // standard, simple-jp, natural
+        let strictSourceMode = false;
+
         // ===== Tab Navigation (V2) =====
         function switchTab(tabName) {
             currentTab = tabName;
@@ -1220,8 +1338,93 @@
             updatePromptPreview();
         }
 
-        // ===== Prompt Generation (V2) =====
+        // ===== Character Prompt Builder (V4) =====
+        function buildCharacterPrompt(character, format) {
+            if (!character.builder) return ''; // Fallback for old data
+
+            const b = character.builder;
+            const parts = [];
+
+            if (format === 'standard') {
+                // Standard Tags: 1boy/1girl, androgynous, angel, long hair, light brown, blue eyes...
+                if (b.gender === 'male') parts.push('1boy');
+                else if (b.gender === 'female') parts.push('1girl');
+                else if (b.gender === 'androgynous') parts.push('1boy', 'androgynous');
+
+                if (b.species?.en) parts.push(b.species.en);
+                if (b.hair?.en) parts.push(b.hair.en);
+                if (b.hairColor?.en) parts.push(b.hairColor.en + ' hair');
+                if (b.eyes?.en) parts.push(b.eyes.en);
+                if (b.clothes?.en) parts.push(b.clothes.en);
+                if (b.accessories?.en) parts.push(b.accessories.en);
+
+                return parts.filter(p => p).join(', ');
+
+            } else if (format === 'simple-jp') {
+                // Simple JP: 男の子, 中性的, 天使, ロングヘア, 薄茶色の髪...
+                if (b.gender === 'male') parts.push('男の子');
+                else if (b.gender === 'female') parts.push('女の子');
+                else if (b.gender === 'androgynous') parts.push('男の子', '中性的');
+
+                if (b.species?.jp) parts.push(b.species.jp);
+                if (b.hair?.jp) parts.push(b.hair.jp);
+                if (b.hairColor?.jp) parts.push(b.hairColor.jp + 'の髪');
+                if (b.eyes?.jp) parts.push(b.eyes.jp);
+                if (b.clothes?.jp) parts.push(b.clothes.jp);
+                if (b.accessories?.jp) parts.push(b.accessories.jp);
+
+                return parts.filter(p => p).join(', ');
+
+            } else if (format === 'natural') {
+                // Natural Language: An androgynous angel boy with long light brown hair and blue eyes, wearing military uniform...
+                let desc = '';
+
+                // Gender + Species
+                const article = (b.gender === 'androgynous') ? 'An' : 'A';
+                const genderTerm = (b.gender === 'male') ? 'boy' : (b.gender === 'female') ? 'girl' : 'person';
+                const speciesTerm = b.species?.en || '';
+
+                if (b.gender === 'androgynous' && speciesTerm) {
+                    desc = `${article} ${b.gender} ${speciesTerm} ${genderTerm}`;
+                } else if (speciesTerm) {
+                    desc = `${article} ${speciesTerm} ${genderTerm}`;
+                } else {
+                    desc = `${article} ${genderTerm}`;
+                }
+
+                // Hair
+                const hairParts = [];
+                if (b.hair?.en) hairParts.push(b.hair.en.toLowerCase());
+                if (b.hairColor?.en) hairParts.push(b.hairColor.en.toLowerCase());
+                if (hairParts.length > 0) {
+                    desc += ` with ${hairParts.join(' ')} hair`;
+                }
+
+                // Eyes
+                if (b.eyes?.en) {
+                    desc += ` and ${b.eyes.en.toLowerCase()}`;
+                }
+
+                // Clothes
+                if (b.clothes?.en) {
+                    desc += `, wearing ${b.clothes.en.toLowerCase()}`;
+                }
+
+                // Accessories
+                if (b.accessories?.en) {
+                    desc += ` and ${b.accessories.en.toLowerCase()}`;
+                }
+
+                return desc;
+            }
+
+            return '';
+        }
+
+        // ===== Prompt Generation (V4) =====
         async function generatePrompt() {
+            const format = document.getElementById('output-format')?.value || 'standard';
+            const strictSource = document.getElementById('strict-source-mode')?.checked || false;
             const includePositive = document.getElementById('quality-positive-toggle').checked;
             const includeNegative = document.getElementById('quality-negative-toggle').checked;
 
@@ -1232,49 +1435,26 @@
 
             // Mode-specific logic
             if (currentMode === 'solo') {
-                // Solo mode: [quality] + [char tags] + [char appearance] + [situation] + [action]
                 if (selectedCharacters.length > 0) {
                     const char = selectedCharacters[0];
-                    promptParts.push('1boy' in char.trigger || '1girl' in char.trigger ? '' : '1girl'); // Default to 1girl if not specified
-                    promptParts.push('solo');
-                    promptParts.push(char.trigger);
-                    promptParts.push(char.appearance);
+                    if (format === 'standard') promptParts.push('solo');
+                    else if (format === 'simple-jp') promptParts.push('単独');
+
+                    promptParts.push(buildCharacterPrompt(char, format));
                 }
             } else if (currentMode === 'duo') {
-                // Duo/Group mode: [person tags] + [char tags] + [char appearances] + [situation] + [action]
                 if (selectedCharacters.length > 0) {
-                    const autoPersonTags = document.getElementById('auto-person-tags').checked;
-
-                    if (autoPersonTags) {
-                        // Generate person count tags
-                        const charCount = selectedCharacters.length;
-                        if (charCount === 2) {
-                            const genders = selectedCharacters.map(c => {
-                                if (c.trigger.includes('boy') || c.trigger.includes('male')) return 'boy';
-                                if (c.trigger.includes('girl') || c.trigger.includes('female')) return 'girl';
-                                return 'girl'; // default
-                            });
-
-                            if (genders.every(g => g === 'boy')) promptParts.push('2boys');
-                            else if (genders.every(g => g === 'girl')) promptParts.push('2girls');
-                            else promptParts.push('1boy, 1girl');
-                        } else if (charCount > 2) {
-                            promptParts.push('multiple girls'); // Simplification for 3+
-                        }
-                    }
-
-                    // Add each character's tags
                     selectedCharacters.forEach(char => {
-                        promptParts.push(char.trigger);
-                        promptParts.push(char.appearance);
+                        promptParts.push(buildCharacterPrompt(char, format));
                     });
                 }
             } else if (currentMode === 'comic') {
-                // Comic mode: [comic tags] + [char tags] + [theme/action]
-                promptParts.push('comic, monochrome');
+                if (format === 'standard') promptParts.push('comic, monochrome');
+                else if (format === 'simple-jp') promptParts.push('漫画, モノクロ');
+                else if (format === 'natural') promptParts.push('A comic-style monochrome illustration');
 
                 selectedCharacters.forEach(char => {
-                    promptParts.push(char.trigger);
+                    promptParts.push(buildCharacterPrompt(char, format));
                 });
             }
 
@@ -1289,17 +1469,31 @@
             }
 
             // Add custom action input
-            const customAction = document.getElementById('custom-action-input').value.trim();
+            const customAction = document.getElementById('custom-action-input')?.value.trim();
             if (customAction) {
                 promptParts.push(customAction);
             }
 
             // Combine all parts
-            const characterPrompt = promptParts.filter(p => p).join(', ');
+            let characterPrompt = promptParts.filter(p => p).join(', ');
 
-            const positivePrompt = [positivePreset, characterPrompt]
+            // Apply format-specific combination
+            if (format === 'natural') {
+                // For natural language, connect with proper grammar
+                characterPrompt = promptParts.filter(p => p).join('. ');
+            }
+
+            let positivePrompt = [positivePreset, characterPrompt]
                 .filter(p => p.trim())
                 .join(', ');
+
+            // V4: Strict Source Mode
+            if (strictSource && selectedCharacters.length > 0) {
+                const charName = selectedCharacters[0].name;
+                const actionText = customAction || selectedAction?.name || '画像';
+                const instruction = `添付画像ファイルを唯一のキャラクターソースとして、「${charName}」の「${actionText}」画像を生成してください。\n\n`;
+                positivePrompt = instruction + positivePrompt;
+            }
 
             const fullPrompt = negativePreset
                 ? `${positivePrompt}\nNegative prompt: ${negativePreset}`
@@ -1414,8 +1608,24 @@
                     if (character) {
                         document.getElementById('character-id').value = character.id;
                         document.getElementById('character-name').value = character.name;
-                        document.getElementById('character-trigger').value = character.trigger;
-                        document.getElementById('character-appearance').value = character.appearance;
+
+                        // V4 Builder fields
+                        if (character.builder) {
+                            const b = character.builder;
+                            document.querySelector(`input[name="gender"][value="${b.gender || 'androgynous'}"]`).checked = true;
+                            document.getElementById('species-jp').value = b.species?.jp || '';
+                            document.getElementById('species-en').value = b.species?.en || '';
+                            document.getElementById('hair-jp').value = b.hair?.jp || '';
+                            document.getElementById('hair-en').value = b.hair?.en || '';
+                            document.getElementById('haircolor-jp').value = b.hairColor?.jp || '';
+                            document.getElementById('haircolor-en').value = b.hairColor?.en || '';
+                            document.getElementById('eyes-jp').value = b.eyes?.jp || '';
+                            document.getElementById('eyes-en').value = b.eyes?.en || '';
+                            document.getElementById('clothes-jp').value = b.clothes?.jp || '';
+                            document.getElementById('clothes-en').value = b.clothes?.en || '';
+                            document.getElementById('accessories-jp').value = b.accessories?.jp || '';
+                            document.getElementById('accessories-en').value = b.accessories?.en || '';
+                        }
 
                         const previewContainer = document.getElementById('image-preview-container');
                         if (character.images && character.images.length > 0) {
@@ -1477,8 +1687,33 @@
 
             const characterData = {
                 name: document.getElementById('character-name').value,
-                trigger: document.getElementById('character-trigger').value,
-                appearance: document.getElementById('character-appearance').value,
+                builder: {
+                    gender: document.querySelector('input[name="gender"]:checked')?.value || 'androgynous',
+                    species: {
+                        jp: document.getElementById('species-jp').value,
+                        en: document.getElementById('species-en').value
+                    },
+                    hair: {
+                        jp: document.getElementById('hair-jp').value,
+                        en: document.getElementById('hair-en').value
+                    },
+                    hairColor: {
+                        jp: document.getElementById('haircolor-jp').value,
+                        en: document.getElementById('haircolor-en').value
+                    },
+                    eyes: {
+                        jp: document.getElementById('eyes-jp').value,
+                        en: document.getElementById('eyes-en').value
+                    },
+                    clothes: {
+                        jp: document.getElementById('clothes-jp').value,
+                        en: document.getElementById('clothes-en').value
+                    },
+                    accessories: {
+                        jp: document.getElementById('accessories-jp').value,
+                        en: document.getElementById('accessories-en').value
+                    }
+                },
                 images: Array.from(document.getElementById('image-preview-container').querySelectorAll('img'))
                     .map(img => img.src)
             };
@@ -2114,6 +2349,10 @@
             document.getElementById('quality-positive-toggle').addEventListener('change', updatePromptPreview);
             document.getElementById('quality-negative-toggle').addEventListener('change', updatePromptPreview);
             document.getElementById('auto-person-tags')?.addEventListener('change', updatePromptPreview);
+
+            // V4 controls
+            document.getElementById('output-format')?.addEventListener('change', updatePromptPreview);
+            document.getElementById('strict-source-mode')?.addEventListener('change', updatePromptPreview);
 
             // Copy & Save
             document.getElementById('copy-prompt-btn').addEventListener('click', copyPrompt);
