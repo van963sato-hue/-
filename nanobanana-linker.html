@@ -15,9 +15,6 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- QR Code Library (V8) -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
     <style>
         * {
             -webkit-tap-highlight-color: transparent;
@@ -258,15 +255,12 @@
 
         <!-- Tab Navigation -->
         <nav class="card mb-6 overflow-hidden">
-            <div class="flex border-b overflow-x-auto">
+            <div class="flex border-b">
                 <button class="tab-button active flex-1" data-tab="generator">
                     <span class="text-lg">🎨</span> Generator Hub
                 </button>
                 <button class="tab-button flex-1" data-tab="story">
                     <span class="text-lg">📖</span> Story Mode
-                </button>
-                <button class="tab-button flex-1" data-tab="history">
-                    <span class="text-lg">📜</span> History
                 </button>
                 <button class="tab-button flex-1" data-tab="database">
                     <span class="text-lg">👥</span> Database
@@ -317,66 +311,6 @@
                         <!-- V8: Per-Character Advanced Settings -->
                         <div id="per-character-advanced-settings" class="space-y-4">
                             <!-- Dynamically populated when characters are selected -->
-                        </div>
-
-                        <!-- V9: Costume Manager -->
-                        <div class="accordion">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <span>👗 衣装管理 (Wardrobe)</span>
-                                <span class="icon">▼</span>
-                            </div>
-                            <div class="accordion-content">
-                                <div class="space-y-4">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <!-- Upper Body -->
-                                        <div>
-                                            <label class="block text-gray-700 font-semibold mb-2">🎽 Upper Body（上半身）</label>
-                                            <select id="costume-upper" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                                <option value="">指定なし</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Lower Body -->
-                                        <div>
-                                            <label class="block text-gray-700 font-semibold mb-2">👖 Lower Body（下半身）</label>
-                                            <select id="costume-lower" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                                <option value="">指定なし</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Full Outfit -->
-                                        <div class="md:col-span-2">
-                                            <label class="block text-gray-700 font-semibold mb-2">👘 Full Outfit（全身）</label>
-                                            <select id="costume-full" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                                <option value="">指定なし</option>
-                                            </select>
-                                            <p class="text-xs text-gray-500 mt-1">※ Full Outfitを選択すると、上半身・下半身の設定は無視されます</p>
-                                        </div>
-
-                                        <!-- Accessory A -->
-                                        <div>
-                                            <label class="block text-gray-700 font-semibold mb-2">💎 Accessory A（装飾品 A）</label>
-                                            <select id="costume-accessory-a" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                                <option value="">指定なし</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Accessory B -->
-                                        <div>
-                                            <label class="block text-gray-700 font-semibold mb-2">👑 Accessory B（装飾品 B）</label>
-                                            <select id="costume-accessory-b" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                                <option value="">指定なし</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="border-t pt-4">
-                                        <button id="manage-costumes-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold transition">
-                                            ⚙️ 衣装を管理
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Accordion 2: Scene & Props (V6) -->
@@ -570,14 +504,9 @@
 
                         <!-- Action Buttons -->
                         <div class="card p-6 space-y-3">
-                            <div class="flex gap-2">
-                                <button id="copy-prompt-btn" class="btn-primary flex-1 text-white px-6 py-3 rounded-lg font-semibold">
-                                    📋 プロンプトをコピー
-                                </button>
-                                <button id="qr-code-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg font-semibold transition" title="QRコード生成">
-                                    📱
-                                </button>
-                            </div>
+                            <button id="copy-prompt-btn" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
+                                📋 プロンプトをコピー
+                            </button>
                             <button id="save-images-btn" class="bg-green-500 hover:bg-green-600 w-full text-white px-6 py-3 rounded-lg font-semibold transition">
                                 💾 画像を保存
                             </button>
@@ -680,25 +609,6 @@
                         </div>
                         <div id="pages-container" class="space-y-4"></div>
                     </div>
-                </div>
-            </div>
-
-            <!-- History Tab (V9) -->
-            <div id="history-tab" class="tab-content hidden">
-                <div class="card p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">📜 生成履歴</h2>
-                        <div class="flex gap-2">
-                            <button id="filter-favorites-btn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-semibold transition">
-                                ⭐ お気に入りのみ
-                            </button>
-                            <button id="clear-history-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold transition">
-                                🗑️ 履歴をクリア
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="history-list" class="space-y-4"></div>
                 </div>
             </div>
 
@@ -816,36 +726,6 @@
 
                     <div id="props-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
-
-                <!-- Data Management (V8) -->
-                <div class="card p-6 mt-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">💾 データ管理 (Backup & Restore)</h2>
-
-                    <div class="space-y-4">
-                        <div class="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
-                            <h3 class="font-bold text-gray-800 mb-2">📤 バックアップ (Export)</h3>
-                            <p class="text-sm text-gray-600 mb-3">全てのデータ（キャラ、設定、画像など）を1つのJSONファイルとして保存します。</p>
-                            <button id="export-data-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold transition">
-                                📥 データをエクスポート
-                            </button>
-                        </div>
-
-                        <div class="bg-green-50 p-4 rounded-lg border-2 border-green-200">
-                            <h3 class="font-bold text-gray-800 mb-2">📥 復元 (Import)</h3>
-                            <p class="text-sm text-gray-600 mb-3">エクスポートされたJSONファイルを読み込んで、データを復元します。</p>
-                            <input type="file" id="import-data-input" accept=".json" class="hidden">
-                            <button id="import-data-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold transition">
-                                📤 データをインポート
-                            </button>
-                        </div>
-
-                        <div class="bg-yellow-50 p-3 rounded-lg border-2 border-yellow-200">
-                            <p class="text-sm text-gray-700">
-                                ⚠️ <strong>注意:</strong> 画像データが含まれる場合、ファイルサイズが大きくなる可能性があります。
-                            </p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -905,76 +785,6 @@
                     <textarea id="prop-prompt" rows="4" required
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="例：sword, steel blade, ornate handle"></textarea>
-                </div>
-
-                <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
-                    💾 保存
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Costume Management Modal (V9) -->
-    <div id="costume-management-modal" class="modal">
-        <div class="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto scrollbar-thin">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold text-gray-800">👗 衣装管理</h3>
-                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
-            </div>
-
-            <!-- Costume Type Tabs -->
-            <div class="flex gap-2 mb-4 overflow-x-auto">
-                <button class="costume-type-tab active px-4 py-2 rounded-lg bg-blue-500 text-white font-semibold" data-type="upper">
-                    🎽 Upper Body
-                </button>
-                <button class="costume-type-tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold" data-type="lower">
-                    👖 Lower Body
-                </button>
-                <button class="costume-type-tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold" data-type="full">
-                    👘 Full Outfit
-                </button>
-                <button class="costume-type-tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold" data-type="accessoryA">
-                    💎 Accessory A
-                </button>
-                <button class="costume-type-tab px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold" data-type="accessoryB">
-                    👑 Accessory B
-                </button>
-            </div>
-
-            <!-- Add Costume Button -->
-            <button id="add-costume-btn" class="btn-primary text-white px-4 py-2 rounded-lg mb-4">
-                ➕ 衣装を追加
-            </button>
-
-            <!-- Costume List -->
-            <div id="costume-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </div>
-    </div>
-
-    <!-- Costume Edit Modal (V9) -->
-    <div id="costume-edit-modal" class="modal">
-        <div class="bg-white rounded-lg p-6 max-w-xl w-full mx-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold text-gray-800" id="costume-edit-modal-title">衣装登録</h3>
-                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
-            </div>
-
-            <form id="costume-form" class="space-y-4">
-                <input type="hidden" id="costume-id">
-                <input type="hidden" id="costume-type">
-
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">衣装名 (Name)</label>
-                    <input type="text" id="costume-name" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="例：白いブラウス、デニムパンツ">
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">タグ (Tags)</label>
-                    <textarea id="costume-tags" rows="4" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="例：white blouse, frilled collar, long sleeves"></textarea>
                 </div>
 
                 <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
@@ -1193,20 +1003,6 @@
         </div>
     </div>
 
-    <!-- QR Code Modal (V8) -->
-    <div id="qr-code-modal" class="modal">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold text-gray-800">📱 QRコード</h3>
-                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
-            </div>
-            <div class="text-center">
-                <div id="qr-code-container" class="inline-block p-4 bg-white border-4 border-gray-300 rounded-lg mb-4"></div>
-                <p class="text-sm text-gray-600">スマホでスキャンしてプロンプトを取得</p>
-            </div>
-        </div>
-    </div>
-
     <!-- Situation Edit Modal -->
     <div id="situation-modal" class="modal">
         <div class="bg-white rounded-lg p-6 max-w-xl w-full mx-4">
@@ -1315,7 +1111,7 @@
     <script>
         // ===== IndexedDB Setup =====
         const DB_NAME = 'NanobananaLinkerDB';
-        const DB_VERSION = 7; // V9: Added Costumes & History stores
+        const DB_VERSION = 6; // V8: Extended Character fields (age, height, bodyType)
         let db;
 
         function initDB() {
@@ -1378,20 +1174,6 @@
                     // Settings Store
                     if (!db.objectStoreNames.contains('settings')) {
                         db.createObjectStore('settings', { keyPath: 'key' });
-                    }
-
-                    // Costumes Store (V9)
-                    if (!db.objectStoreNames.contains('costumes')) {
-                        const costumeStore = db.createObjectStore('costumes', { keyPath: 'id', autoIncrement: true });
-                        costumeStore.createIndex('name', 'name', { unique: false });
-                        costumeStore.createIndex('type', 'type', { unique: false }); // upper, lower, full, accessoryA, accessoryB
-                    }
-
-                    // History Store (V9)
-                    if (!db.objectStoreNames.contains('history')) {
-                        const historyStore = db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
-                        historyStore.createIndex('timestamp', 'timestamp', { unique: false });
-                        historyStore.createIndex('favorite', 'favorite', { unique: false });
                     }
                 };
             });
@@ -1622,139 +1404,6 @@
             });
         }
 
-        // ===== Costume Operations (V9) =====
-        function addCostume(costume) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['costumes'], 'readwrite');
-                const store = transaction.objectStore('costumes');
-                const request = store.add(costume);
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function updateCostume(costume) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['costumes'], 'readwrite');
-                const store = transaction.objectStore('costumes');
-                const request = store.put(costume);
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function deleteCostume(id) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['costumes'], 'readwrite');
-                const store = transaction.objectStore('costumes');
-                const request = store.delete(id);
-
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function getAllCostumes() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['costumes'], 'readonly');
-                const store = transaction.objectStore('costumes');
-                const request = store.getAll();
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function getCostumesByType(type) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['costumes'], 'readonly');
-                const store = transaction.objectStore('costumes');
-                const index = store.index('type');
-                const request = index.getAll(type);
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        // ===== History Operations (V9) =====
-        function addHistory(historyEntry) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['history'], 'readwrite');
-                const store = transaction.objectStore('history');
-                historyEntry.timestamp = Date.now();
-                historyEntry.favorite = historyEntry.favorite || false;
-                const request = store.add(historyEntry);
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function updateHistory(historyEntry) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['history'], 'readwrite');
-                const store = transaction.objectStore('history');
-                const request = store.put(historyEntry);
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function deleteHistory(id) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['history'], 'readwrite');
-                const store = transaction.objectStore('history');
-                const request = store.delete(id);
-
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function getAllHistory() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['history'], 'readonly');
-                const store = transaction.objectStore('history');
-                const request = store.getAll();
-
-                request.onsuccess = () => {
-                    // Sort by timestamp descending (newest first)
-                    const sorted = request.result.sort((a, b) => b.timestamp - a.timestamp);
-                    resolve(sorted);
-                };
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function toggleHistoryFavorite(id) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const transaction = db.transaction(['history'], 'readwrite');
-                    const store = transaction.objectStore('history');
-                    const getRequest = store.get(id);
-
-                    getRequest.onsuccess = () => {
-                        const entry = getRequest.result;
-                        if (entry) {
-                            entry.favorite = !entry.favorite;
-                            const putRequest = store.put(entry);
-                            putRequest.onsuccess = () => resolve(entry.favorite);
-                            putRequest.onerror = () => reject(putRequest.error);
-                        } else {
-                            reject(new Error('History entry not found'));
-                        }
-                    };
-                    getRequest.onerror = () => reject(getRequest.error);
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        }
-
         // ===== Project Operations (V3) =====
         function addProject(project) {
             return new Promise((resolve, reject) => {
@@ -1887,175 +1536,6 @@
             });
         }
 
-        // ===== Backup & Restore Operations (V8) =====
-        async function exportAllData() {
-            try {
-                const data = {
-                    version: DB_VERSION,
-                    exportDate: new Date().toISOString(),
-                    characters: await getAllCharacters(),
-                    situations: await getAllSituations(),
-                    actions: await getAllActions(),
-                    styles: await getAllStyles(),
-                    props: await getAllProps(),
-                    costumes: await getAllCostumes(),
-                    history: await getAllHistory(),
-                    projects: await getAllProjects(),
-                    settings: await getAllSettings()
-                };
-
-                const json = JSON.stringify(data, null, 2);
-                const blob = new Blob([json], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-
-                const now = new Date();
-                const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-                const filename = `linker_backup_${dateStr}.json`;
-
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                // Calculate approximate file size for user info
-                const sizeInMB = (blob.size / (1024 * 1024)).toFixed(2);
-                alert(`バックアップが完了しました！\nファイル名: ${filename}\nサイズ: ${sizeInMB} MB`);
-            } catch (error) {
-                console.error('Export error:', error);
-                alert('エクスポートに失敗しました: ' + error.message);
-            }
-        }
-
-        async function importAllData(file) {
-            try {
-                const text = await file.text();
-                const data = JSON.parse(text);
-
-                // Validate data structure
-                if (!data.version || !data.characters) {
-                    throw new Error('無効なバックアップファイルです');
-                }
-
-                // Warn about file size if large
-                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-                if (sizeInMB > 10) {
-                    if (!confirm(`警告: ファイルサイズが ${sizeInMB} MB と大きいです。\n画像データが含まれている可能性があります。\n\nインポートを続行しますか？`)) {
-                        return;
-                    }
-                }
-
-                // Confirm overwrite
-                if (!confirm('既存のデータを上書きします。\nこの操作は取り消せません。\n\n続行しますか？')) {
-                    return;
-                }
-
-                // Import data
-                if (data.characters) {
-                    for (const char of data.characters) {
-                        delete char.id; // Let DB assign new ID
-                        await addCharacter(char);
-                    }
-                }
-
-                if (data.situations) {
-                    for (const situation of data.situations) {
-                        delete situation.id;
-                        await addSituation(situation);
-                    }
-                }
-
-                if (data.actions) {
-                    for (const action of data.actions) {
-                        delete action.id;
-                        await addAction(action);
-                    }
-                }
-
-                if (data.styles) {
-                    for (const style of data.styles) {
-                        delete style.id;
-                        await addStyle(style);
-                    }
-                }
-
-                if (data.props) {
-                    for (const prop of data.props) {
-                        delete prop.id;
-                        await addProp(prop);
-                    }
-                }
-
-                if (data.costumes) {
-                    for (const costume of data.costumes) {
-                        delete costume.id;
-                        await addCostume(costume);
-                    }
-                }
-
-                if (data.history) {
-                    for (const entry of data.history) {
-                        delete entry.id;
-                        await addHistory(entry);
-                    }
-                }
-
-                if (data.projects) {
-                    for (const project of data.projects) {
-                        const oldProjectId = project.id;
-                        delete project.id;
-                        const newProjectId = await addProject(project);
-
-                        // Import pages for this project if they exist
-                        if (data.pages) {
-                            const projectPages = data.pages.filter(p => p.projectId === oldProjectId);
-                            for (const page of projectPages) {
-                                delete page.id;
-                                page.projectId = newProjectId;
-                                await addPage(page);
-                            }
-                        }
-                    }
-                }
-
-                if (data.settings) {
-                    for (const setting of data.settings) {
-                        await saveSetting(setting.key, setting.value);
-                    }
-                }
-
-                alert('インポートが完了しました！\nページを再読み込みします。');
-                location.reload();
-            } catch (error) {
-                console.error('Import error:', error);
-                alert('インポートに失敗しました: ' + error.message);
-            }
-        }
-
-        function getAllSettings() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['settings'], 'readonly');
-                const store = transaction.objectStore('settings');
-                const request = store.getAll();
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        function getAllProjects() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction(['projects'], 'readonly');
-                const store = transaction.objectStore('projects');
-                const request = store.getAll();
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
         // ===== UI State (V2) =====
         let currentTab = 'generator';
         let currentMode = 'solo'; // solo, duo, comic
@@ -2082,25 +1562,6 @@
         let currentOutputFormat = 'standard'; // standard, simple-jp, natural
         let strictSourceMode = false;
 
-        // ===== UI State (V5) =====
-        let styles = [];
-        let selectedStyles = []; // Array of style IDs
-        let props = [];
-        let selectedProp = null;
-
-        // ===== UI State (V9) =====
-        let costumes = [];
-        let selectedCostumes = {
-            upper: null,
-            lower: null,
-            full: null,
-            accessoryA: null,
-            accessoryB: null
-        };
-        let currentCostumeType = 'upper'; // For costume management modal
-        let editingCostumeId = null;
-        let showFavoritesOnly = false;
-
         // ===== Tab Navigation (V2) =====
         function switchTab(tabName) {
             currentTab = tabName;
@@ -2121,8 +1582,6 @@
                 renderGeneratorHub();
             } else if (tabName === 'story') {
                 loadProjectList();
-            } else if (tabName === 'history') {
-                loadHistoryList();
             } else if (tabName === 'database') {
                 loadCharacterList();
                 loadSituationList();
@@ -2505,7 +1964,6 @@
             await renderCharacterSelector();
             await renderSituationSelector();
             await renderActionSelector();
-            await loadCostumeSelectors(); // V9
             updatePromptPreview();
         }
 
@@ -2649,40 +2107,6 @@
                         if (advancedParts.length > 0) {
                             charSection += `\n${advancedParts.join(', ')}`;
                         }
-
-                        // V9: Add costume tags
-                        const costumeParts = [];
-
-                        // If Full Outfit is selected, use only that
-                        if (selectedCostumes.full) {
-                            const fullCostume = costumes.find(c => c.id === selectedCostumes.full);
-                            if (fullCostume) costumeParts.push(fullCostume.tags);
-                        } else {
-                            // Otherwise, use upper and lower separately
-                            if (selectedCostumes.upper) {
-                                const upperCostume = costumes.find(c => c.id === selectedCostumes.upper);
-                                if (upperCostume) costumeParts.push(upperCostume.tags);
-                            }
-                            if (selectedCostumes.lower) {
-                                const lowerCostume = costumes.find(c => c.id === selectedCostumes.lower);
-                                if (lowerCostume) costumeParts.push(lowerCostume.tags);
-                            }
-                        }
-
-                        // Add accessories regardless
-                        if (selectedCostumes.accessoryA) {
-                            const accessoryA = costumes.find(c => c.id === selectedCostumes.accessoryA);
-                            if (accessoryA) costumeParts.push(accessoryA.tags);
-                        }
-                        if (selectedCostumes.accessoryB) {
-                            const accessoryB = costumes.find(c => c.id === selectedCostumes.accessoryB);
-                            if (accessoryB) costumeParts.push(accessoryB.tags);
-                        }
-
-                        if (costumeParts.length > 0) {
-                            charSection += `\n${costumeParts.join(', ')}`;
-                        }
-
                         sections.push(charSection);
                     }
                 });
@@ -2843,67 +2267,11 @@
                     btn.textContent = originalText;
                 }, 2000);
 
-                // V9: Save to history
-                await saveToHistory(prompt);
-
                 // Show preview in console for debugging
                 console.log('コピーされたプロンプト:', prompt);
             } catch (err) {
                 console.error('コピーエラー:', err);
                 alert('クリップボードへのコピーに失敗しました。\nエラー: ' + err.message + '\n\nHTTPS接続を使用しているか確認してください。');
-            }
-        }
-
-        async function saveToHistory(prompt) {
-            try {
-                const historyEntry = {
-                    prompt: prompt,
-                    characterNames: selectedCharacters.map(c => c.name).join(', ') || '(なし)',
-                    mode: currentMode,
-                    format: currentOutputFormat,
-                    situation: selectedSituation?.name || '',
-                    action: selectedAction?.name || '',
-                    costumes: { ...selectedCostumes },
-                    styles: [...selectedStyles]
-                };
-
-                await addHistory(historyEntry);
-            } catch (err) {
-                console.error('履歴保存エラー:', err);
-            }
-        }
-
-        async function generateQRCode() {
-            try {
-                const prompt = await generatePrompt();
-
-                if (!prompt.trim()) {
-                    alert('プロンプトが空です。キャラクターを選択してください。');
-                    return;
-                }
-
-                // Clear previous QR code
-                const container = document.getElementById('qr-code-container');
-                container.innerHTML = '';
-
-                // Generate QR code
-                const canvas = document.createElement('canvas');
-                container.appendChild(canvas);
-
-                await QRCode.toCanvas(canvas, prompt, {
-                    width: 300,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#FFFFFF'
-                    }
-                });
-
-                // Show modal
-                document.getElementById('qr-code-modal').classList.add('show');
-            } catch (err) {
-                console.error('QRコード生成エラー:', err);
-                alert('QRコードの生成に失敗しました。\nエラー: ' + err.message);
             }
         }
 
@@ -4009,293 +3377,6 @@
             content.classList.toggle('collapsed');
         }
 
-        // ===== V9: Costume Management =====
-        async function loadCostumeSelectors() {
-            costumes = await getAllCostumes();
-
-            const types = ['upper', 'lower', 'full', 'accessory-a', 'accessory-b'];
-            const typeMap = {
-                'upper': 'upper',
-                'lower': 'lower',
-                'full': 'full',
-                'accessory-a': 'accessoryA',
-                'accessory-b': 'accessoryB'
-            };
-
-            types.forEach(type => {
-                const selector = document.getElementById(`costume-${type}`);
-                if (!selector) return;
-
-                const mappedType = typeMap[type];
-                const typeCostumes = costumes.filter(c => c.type === mappedType);
-
-                selector.innerHTML = '<option value="">指定なし</option>' +
-                    typeCostumes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-
-                selector.value = selectedCostumes[mappedType] || '';
-            });
-        }
-
-        function updateCostumeSelection(type, costumeId) {
-            selectedCostumes[type] = costumeId ? parseInt(costumeId) : null;
-
-            // If full outfit is selected, disable upper and lower
-            const upperSelect = document.getElementById('costume-upper');
-            const lowerSelect = document.getElementById('costume-lower');
-
-            if (type === 'full' && costumeId) {
-                upperSelect.disabled = true;
-                lowerSelect.disabled = true;
-                upperSelect.classList.add('opacity-50');
-                lowerSelect.classList.add('opacity-50');
-            } else if (type === 'full' && !costumeId) {
-                upperSelect.disabled = false;
-                lowerSelect.disabled = false;
-                upperSelect.classList.remove('opacity-50');
-                lowerSelect.classList.remove('opacity-50');
-            }
-
-            updatePromptPreview();
-        }
-
-        async function openCostumeManagementModal() {
-            await loadCostumeList();
-            document.getElementById('costume-management-modal').classList.add('show');
-        }
-
-        async function loadCostumeList() {
-            costumes = await getAllCostumes();
-            const typeCostumes = costumes.filter(c => c.type === currentCostumeType);
-            const container = document.getElementById('costume-list');
-
-            if (typeCostumes.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">衣装が登録されていません</div>';
-                return;
-            }
-
-            container.innerHTML = typeCostumes.map(costume => `
-                <div class="card p-4">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-bold text-gray-800">${costume.name}</h3>
-                        <div class="space-x-2">
-                            <button class="edit-costume text-blue-500 hover:text-blue-700" data-id="${costume.id}">✏️</button>
-                            <button class="delete-costume text-red-500 hover:text-red-700" data-id="${costume.id}">🗑️</button>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600">${costume.tags}</p>
-                </div>
-            `).join('');
-        }
-
-        function switchCostumeType(type) {
-            currentCostumeType = type;
-            document.querySelectorAll('.costume-type-tab').forEach(btn => {
-                if (btn.dataset.type === type) {
-                    btn.classList.add('active', 'bg-blue-500', 'text-white');
-                    btn.classList.remove('bg-gray-200', 'text-gray-700');
-                } else {
-                    btn.classList.remove('active', 'bg-blue-500', 'text-white');
-                    btn.classList.add('bg-gray-200', 'text-gray-700');
-                }
-            });
-            loadCostumeList();
-        }
-
-        function openCostumeEditModal(costumeId = null) {
-            editingCostumeId = costumeId;
-            const modal = document.getElementById('costume-edit-modal');
-            const form = document.getElementById('costume-form');
-            const title = document.getElementById('costume-edit-modal-title');
-
-            if (costumeId) {
-                title.textContent = '衣装編集';
-                const costume = costumes.find(c => c.id === costumeId);
-                if (costume) {
-                    document.getElementById('costume-id').value = costume.id;
-                    document.getElementById('costume-type').value = costume.type;
-                    document.getElementById('costume-name').value = costume.name;
-                    document.getElementById('costume-tags').value = costume.tags;
-                }
-            } else {
-                title.textContent = '衣装登録';
-                form.reset();
-                document.getElementById('costume-type').value = currentCostumeType;
-            }
-
-            modal.classList.add('show');
-        }
-
-        async function saveCostume(e) {
-            e.preventDefault();
-
-            const costumeData = {
-                name: document.getElementById('costume-name').value,
-                tags: document.getElementById('costume-tags').value,
-                type: document.getElementById('costume-type').value
-            };
-
-            try {
-                if (editingCostumeId) {
-                    costumeData.id = editingCostumeId;
-                    await updateCostume(costumeData);
-                } else {
-                    await addCostume(costumeData);
-                }
-
-                document.getElementById('costume-edit-modal').classList.remove('show');
-                await loadCostumeList();
-                await loadCostumeSelectors();
-            } catch (error) {
-                console.error('Error saving costume:', error);
-                alert('衣装の保存に失敗しました');
-            }
-        }
-
-        async function deleteCostumeConfirm(id) {
-            if (!confirm('この衣装を削除しますか？')) return;
-
-            try {
-                await deleteCostume(id);
-                await loadCostumeList();
-                await loadCostumeSelectors();
-            } catch (error) {
-                console.error('Error deleting costume:', error);
-                alert('衣装の削除に失敗しました');
-            }
-        }
-
-        // ===== V9: History Management =====
-        async function loadHistoryList() {
-            const allHistory = await getAllHistory();
-            const history = showFavoritesOnly ? allHistory.filter(h => h.favorite) : allHistory;
-            const container = document.getElementById('history-list');
-
-            if (history.length === 0) {
-                container.innerHTML = '<div class="text-center text-gray-400 py-12">履歴がありません</div>';
-                return;
-            }
-
-            container.innerHTML = history.map(entry => {
-                const date = new Date(entry.timestamp);
-                const dateStr = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-                const promptPreview = entry.prompt.substring(0, 50) + (entry.prompt.length > 50 ? '...' : '');
-
-                return `
-                    <div class="card p-4 hover:shadow-lg transition cursor-pointer history-entry" data-id="${entry.id}">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-sm text-gray-500">${dateStr}</span>
-                                    <span class="text-sm font-semibold text-blue-600">${entry.characterNames}</span>
-                                </div>
-                                <p class="text-sm text-gray-700">${promptPreview}</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button class="toggle-favorite text-2xl" data-id="${entry.id}" title="お気に入り">
-                                    ${entry.favorite ? '⭐' : '☆'}
-                                </button>
-                                <button class="delete-history text-red-500 hover:text-red-700" data-id="${entry.id}">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function restoreFromHistory(id) {
-            try {
-                const transaction = db.transaction(['history'], 'readonly');
-                const store = transaction.objectStore('history');
-                const request = store.get(id);
-
-                request.onsuccess = async () => {
-                    const entry = request.result;
-                    if (!entry) return;
-
-                    // Restore mode
-                    if (entry.mode) {
-                        switchMode(entry.mode);
-                    }
-
-                    // Restore output format
-                    if (entry.format) {
-                        document.getElementById('output-format').value = entry.format;
-                    }
-
-                    // Restore costumes
-                    if (entry.costumes) {
-                        selectedCostumes = { ...entry.costumes };
-                        await loadCostumeSelectors();
-                    }
-
-                    // Restore styles
-                    if (entry.styles) {
-                        selectedStyles = [...entry.styles];
-                        await loadStyleCheckboxes();
-                    }
-
-                    // Switch to generator tab
-                    switchTab('generator');
-                    updatePromptPreview();
-
-                    alert('履歴から設定を復元しました');
-                };
-            } catch (error) {
-                console.error('Error restoring history:', error);
-                alert('履歴の復元に失敗しました');
-            }
-        }
-
-        async function toggleFavoriteHistory(id) {
-            try {
-                await toggleHistoryFavorite(id);
-                await loadHistoryList();
-            } catch (error) {
-                console.error('Error toggling favorite:', error);
-            }
-        }
-
-        async function deleteHistoryConfirm(id) {
-            if (!confirm('この履歴を削除しますか？')) return;
-
-            try {
-                await deleteHistory(id);
-                await loadHistoryList();
-            } catch (error) {
-                console.error('Error deleting history:', error);
-                alert('履歴の削除に失敗しました');
-            }
-        }
-
-        async function clearAllHistory() {
-            if (!confirm('すべての履歴を削除しますか？\nこの操作は取り消せません。')) return;
-
-            try {
-                const allHistory = await getAllHistory();
-                for (const entry of allHistory) {
-                    if (!entry.favorite) {
-                        await deleteHistory(entry.id);
-                    }
-                }
-                await loadHistoryList();
-                alert('お気に入り以外の履歴を削除しました');
-            } catch (error) {
-                console.error('Error clearing history:', error);
-                alert('履歴のクリアに失敗しました');
-            }
-        }
-
-        function toggleFavoritesFilter() {
-            showFavoritesOnly = !showFavoritesOnly;
-            const btn = document.getElementById('filter-favorites-btn');
-            if (showFavoritesOnly) {
-                btn.classList.add('ring-2', 'ring-yellow-300');
-            } else {
-                btn.classList.remove('ring-2', 'ring-yellow-300');
-            }
-            loadHistoryList();
-        }
-
         // ===== V5 Atmosphere Functions =====
         let selectedStyles = []; // V6: Multiple styles
         let styles = [];
@@ -4460,7 +3541,6 @@
 
             // Copy & Save
             document.getElementById('copy-prompt-btn').addEventListener('click', copyPrompt);
-            document.getElementById('qr-code-btn').addEventListener('click', generateQRCode);
             document.getElementById('save-images-btn').addEventListener('click', saveImages);
 
             // Reference images
@@ -4553,74 +3633,6 @@
 
             // Props Form (V6)
             document.getElementById('props-form').addEventListener('submit', saveProp);
-
-            // Backup & Restore (V8)
-            document.getElementById('export-data-btn').addEventListener('click', exportAllData);
-            document.getElementById('import-data-btn').addEventListener('click', () => {
-                document.getElementById('import-data-input').click();
-            });
-            document.getElementById('import-data-input').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    importAllData(file);
-                    e.target.value = ''; // Reset input
-                }
-            });
-
-            // Costume Manager (V9)
-            document.getElementById('manage-costumes-btn').addEventListener('click', openCostumeManagementModal);
-
-            ['upper', 'lower', 'full', 'accessory-a', 'accessory-b'].forEach(type => {
-                const selector = document.getElementById(`costume-${type}`);
-                if (selector) {
-                    selector.addEventListener('change', (e) => {
-                        const mappedType = {
-                            'upper': 'upper',
-                            'lower': 'lower',
-                            'full': 'full',
-                            'accessory-a': 'accessoryA',
-                            'accessory-b': 'accessoryB'
-                        }[type];
-                        updateCostumeSelection(mappedType, e.target.value);
-                    });
-                }
-            });
-
-            document.getElementById('add-costume-btn').addEventListener('click', () => openCostumeEditModal());
-            document.getElementById('costume-form').addEventListener('submit', saveCostume);
-
-            document.querySelectorAll('.costume-type-tab').forEach(tab => {
-                tab.addEventListener('click', () => switchCostumeType(tab.dataset.type));
-            });
-
-            document.getElementById('costume-list').addEventListener('click', (e) => {
-                if (e.target.classList.contains('edit-costume')) {
-                    openCostumeEditModal(parseInt(e.target.dataset.id));
-                } else if (e.target.classList.contains('delete-costume')) {
-                    deleteCostumeConfirm(parseInt(e.target.dataset.id));
-                }
-            });
-
-            // History (V9)
-            document.getElementById('filter-favorites-btn').addEventListener('click', toggleFavoritesFilter);
-            document.getElementById('clear-history-btn').addEventListener('click', clearAllHistory);
-
-            document.getElementById('history-list').addEventListener('click', (e) => {
-                const entry = e.target.closest('.history-entry');
-                if (entry && !e.target.classList.contains('toggle-favorite') && !e.target.classList.contains('delete-history')) {
-                    restoreFromHistory(parseInt(entry.dataset.id));
-                }
-
-                if (e.target.classList.contains('toggle-favorite')) {
-                    e.stopPropagation();
-                    toggleFavoriteHistory(parseInt(e.target.dataset.id));
-                }
-
-                if (e.target.classList.contains('delete-history')) {
-                    e.stopPropagation();
-                    deleteHistoryConfirm(parseInt(e.target.dataset.id));
-                }
-            });
 
             // Story Mode (V3)
             document.getElementById('add-project-btn').addEventListener('click', () => openProjectModal());
