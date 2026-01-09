@@ -262,6 +262,9 @@
                 <button class="tab-button active flex-1" data-tab="generator">
                     <span class="text-lg">🎨</span> Generator Hub
                 </button>
+                <button class="tab-button flex-1" data-tab="history">
+                    <span class="text-lg">🕘</span> History
+                </button>
                 <button class="tab-button flex-1" data-tab="story">
                     <span class="text-lg">📖</span> Story Mode
                 </button>
@@ -548,6 +551,30 @@
                 </div>
             </div>
 
+            <!-- History Tab (V10) -->
+            <div id="history-tab" class="tab-content hidden">
+                <div class="card p-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">🕘 プロンプト履歴</h2>
+                            <p class="text-sm text-gray-500">自動保存されたプロンプトを確認できます。</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="history-filter-all" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                                全て
+                            </button>
+                            <button id="history-filter-favorites" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm">
+                                ⭐ お気に入り
+                            </button>
+                            <button id="clear-history-btn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                🗑️ 履歴を全削除
+                            </button>
+                        </div>
+                    </div>
+                    <div id="history-list" class="space-y-4"></div>
+                </div>
+            </div>
+
             <!-- Story Mode Tab (V3) -->
             <div id="story-tab" class="tab-content hidden">
                 <!-- Project List View -->
@@ -629,6 +656,9 @@
                         <button class="db-subtab flex-1 py-3 font-semibold transition" data-subtab="actions">
                             🎬 Actions
                         </button>
+                        <button class="db-subtab flex-1 py-3 font-semibold transition" data-subtab="costumes">
+                            👗 Costumes
+                        </button>
                     </div>
                 </div>
 
@@ -676,6 +706,19 @@
                             </button>
                         </div>
                         <div id="action-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                </div>
+
+                <!-- Costumes Sub-tab -->
+                <div id="costumes-subtab" class="db-subtab-content hidden">
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800">👗 衣装データベース</h2>
+                            <button id="add-costume-btn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                                ➕ 衣装追加
+                            </button>
+                        </div>
+                        <div id="costume-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                     </div>
                 </div>
             </div>
@@ -822,6 +865,49 @@
                     <textarea id="prop-prompt" rows="4" required
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="例：sword, steel blade, ornate handle"></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
+                    💾 保存
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Costume Modal (V10) -->
+    <div id="costume-modal" class="modal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-800" id="costume-modal-title">衣装登録</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-700 text-2xl">✕</button>
+            </div>
+
+            <form id="costume-form" class="space-y-4">
+                <input type="hidden" id="costume-id">
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">衣装名 (Name)</label>
+                    <input type="text" id="costume-name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：制服、パーティドレス、鎧">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">スロット (Slot)</label>
+                    <select id="costume-slot" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="1">Slot 1</option>
+                        <option value="2">Slot 2</option>
+                        <option value="3">Slot 3</option>
+                        <option value="4">Slot 4</option>
+                        <option value="5">Slot 5</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-semibold mb-2">プロンプト (Prompt)</label>
+                    <textarea id="costume-prompt" rows="4" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="例：school uniform, blazer, pleated skirt"></textarea>
                 </div>
 
                 <button type="submit" class="btn-primary w-full text-white px-6 py-3 rounded-lg font-semibold">
@@ -1517,8 +1603,8 @@
             return new Promise((resolve, reject) => {
                 const transaction = db.transaction(['history'], 'readwrite');
                 const store = transaction.objectStore('history');
-                historyEntry.timestamp = Date.now();
-                historyEntry.favorite = false;
+                historyEntry.timestamp = historyEntry.timestamp || Date.now();
+                historyEntry.favorite = historyEntry.favorite ?? false;
                 const request = store.add(historyEntry);
 
                 request.onsuccess = () => resolve(request.result);
@@ -1567,6 +1653,180 @@
                 };
                 request.onerror = () => reject(request.error);
             });
+        }
+
+        function getHistoryById(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['history'], 'readonly');
+                const store = transaction.objectStore('history');
+                const request = store.get(id);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        async function clearAllHistory() {
+            const allHistory = await getAllHistory();
+            await Promise.all(allHistory.map(entry => deleteHistory(entry.id)));
+        }
+
+        // ===== History UI (V10) =====
+        function formatHistoryDate(timestamp) {
+            return new Date(timestamp).toLocaleString();
+        }
+
+        function getOutputFormatLabel(format) {
+            switch (format) {
+                case 'simple-jp':
+                    return 'Simple JP';
+                case 'natural':
+                    return 'Natural';
+                default:
+                    return 'Standard';
+            }
+        }
+
+        async function loadHistoryList() {
+            const historyEntries = await getAllHistory();
+            const container = document.getElementById('history-list');
+
+            const filtered = currentHistoryFilter === 'favorites'
+                ? historyEntries.filter(entry => entry.favorite)
+                : historyEntries;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 py-12">履歴がありません</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(entry => `
+                <div class="card p-4">
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2 text-sm text-gray-500">
+                                <span>🕒 ${formatHistoryDate(entry.timestamp)}</span>
+                                <span class="px-2 py-0.5 bg-gray-100 rounded">${entry.mode || 'solo'}</span>
+                                <span class="px-2 py-0.5 bg-gray-100 rounded">${getOutputFormatLabel(entry.outputFormat || 'standard')}</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                👤 ${entry.characters && entry.characters.length > 0 ? entry.characters.join(', ') : 'キャラクターなし'}
+                            </div>
+                            <pre class="bg-gray-50 p-3 rounded text-xs text-gray-700 whitespace-pre-wrap font-mono">${entry.prompt}</pre>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="history-copy bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs" data-id="${entry.id}">
+                                📋 コピー
+                            </button>
+                            <button class="history-preview bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-xs" data-id="${entry.id}">
+                                👀 プレビュー
+                            </button>
+                            <button class="history-favorite ${entry.favorite ? 'bg-yellow-400 hover:bg-yellow-500' : 'bg-gray-200 hover:bg-gray-300'} text-gray-800 px-3 py-2 rounded-lg text-xs" data-id="${entry.id}">
+                                ${entry.favorite ? '⭐ お気に入り' : '☆ お気に入り'}
+                            </button>
+                            <button class="history-delete bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-xs" data-id="${entry.id}">
+                                🗑️ 削除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateHistoryFilterButtons() {
+            const allBtn = document.getElementById('history-filter-all');
+            const favBtn = document.getElementById('history-filter-favorites');
+            if (!allBtn || !favBtn) return;
+            const isAll = currentHistoryFilter === 'all';
+            allBtn.classList.toggle('bg-blue-500', isAll);
+            allBtn.classList.toggle('hover:bg-blue-600', isAll);
+            allBtn.classList.toggle('text-white', isAll);
+            allBtn.classList.toggle('bg-gray-200', !isAll);
+            allBtn.classList.toggle('hover:bg-gray-300', !isAll);
+            allBtn.classList.toggle('text-gray-700', !isAll);
+
+            favBtn.classList.toggle('bg-blue-500', !isAll);
+            favBtn.classList.toggle('hover:bg-blue-600', !isAll);
+            favBtn.classList.toggle('text-white', !isAll);
+            favBtn.classList.toggle('bg-gray-200', isAll);
+            favBtn.classList.toggle('hover:bg-gray-300', isAll);
+            favBtn.classList.toggle('text-gray-700', isAll);
+        }
+
+        async function toggleHistoryFavorite(id) {
+            const entry = await getHistoryById(id);
+            if (!entry) return;
+            entry.favorite = !entry.favorite;
+            await updateHistory(entry);
+            loadHistoryList();
+        }
+
+        async function deleteHistoryEntry(id) {
+            await deleteHistory(id);
+            loadHistoryList();
+        }
+
+        async function previewHistoryEntry(id) {
+            const entry = await getHistoryById(id);
+            if (!entry) return;
+            document.getElementById('prompt-preview').textContent = entry.prompt;
+        }
+
+        async function copyHistoryEntry(id) {
+            const entry = await getHistoryById(id);
+            if (!entry) return;
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(entry.prompt);
+                } else {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = entry.prompt;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+            } catch (err) {
+                alert('❌ コピーに失敗しました: ' + err.message);
+            }
+        }
+
+        function scheduleHistorySave(promptText) {
+            const trimmed = promptText.trim();
+            if (!trimmed || trimmed === 'プロンプトがここに表示されます') return;
+
+            if (
+                selectedCharacters.length === 0 &&
+                !selectedSituation &&
+                !selectedAction &&
+                !document.getElementById('custom-action-input')?.value.trim()
+            ) {
+                return;
+            }
+
+            if (trimmed === lastHistoryPrompt) return;
+
+            if (historySaveTimeout) {
+                clearTimeout(historySaveTimeout);
+            }
+
+            historySaveTimeout = setTimeout(async () => {
+                const entry = {
+                    prompt: trimmed,
+                    mode: currentMode,
+                    outputFormat: document.getElementById('output-format')?.value || 'standard',
+                    characters: selectedCharacters.map(char => char.name),
+                    situation: selectedSituation?.name || '',
+                    action: selectedAction?.name || ''
+                };
+                await addHistory(entry);
+                lastHistoryPrompt = trimmed;
+                if (currentTab === 'history') {
+                    loadHistoryList();
+                }
+            }, 1200);
         }
 
         // ===== Project Operations (V3) =====
@@ -1728,6 +1988,35 @@
         // V8: Per-character advanced settings
         // Structure: { characterId: { composition, gaze, states: [], ageModifier } }
         let perCharacterSettings = {};
+        const COSTUME_SLOTS = [
+            { id: 1, label: 'Slot 1' },
+            { id: 2, label: 'Slot 2' },
+            { id: 3, label: 'Slot 3' },
+            { id: 4, label: 'Slot 4' },
+            { id: 5, label: 'Slot 5' }
+        ];
+        let costumeCache = [];
+
+        function createDefaultPerCharacterSettings() {
+            return {
+                composition: '',
+                gaze: '',
+                states: [],
+                ageModifier: '',
+                costumeSlots: {
+                    1: null,
+                    2: null,
+                    3: null,
+                    4: null,
+                    5: null
+                }
+            };
+        }
+
+        // ===== UI State (V10 History) =====
+        let currentHistoryFilter = 'all';
+        let historySaveTimeout = null;
+        let lastHistoryPrompt = '';
 
         // ===== UI State (V3 Story Mode) =====
         let currentProjectId = null;
@@ -1757,12 +2046,15 @@
             // Load data for specific tabs
             if (tabName === 'generator') {
                 renderGeneratorHub();
+            } else if (tabName === 'history') {
+                loadHistoryList();
             } else if (tabName === 'story') {
                 loadProjectList();
             } else if (tabName === 'database') {
                 loadCharacterList();
                 loadSituationList();
                 loadActionList();
+                loadCostumeList();
             } else if (tabName === 'settings') {
                 loadSettings();
             }
@@ -1863,17 +2155,12 @@
                 }
                 // V8: Initialize settings for new character
                 if (!perCharacterSettings[character.id]) {
-                    perCharacterSettings[character.id] = {
-                        composition: '',
-                        gaze: '',
-                        states: [],
-                        ageModifier: ''
-                    };
+                    perCharacterSettings[character.id] = createDefaultPerCharacterSettings();
                 }
             }
 
             renderCharacterSelector();
-            renderPerCharacterAdvancedSettings(); // V8
+            await renderPerCharacterAdvancedSettings(); // V8
             updatePromptPreview();
         }
 
@@ -1905,7 +2192,7 @@
         }
 
         // V8: Render per-character advanced settings
-        function renderPerCharacterAdvancedSettings() {
+        async function renderPerCharacterAdvancedSettings() {
             const container = document.getElementById('per-character-advanced-settings');
 
             if (selectedCharacters.length === 0) {
@@ -1913,8 +2200,17 @@
                 return;
             }
 
+            costumeCache = await getAllCostumes();
+            const costumesBySlot = COSTUME_SLOTS.reduce((acc, slot) => {
+                acc[slot.id] = costumeCache.filter(costume => parseInt(costume.slot) === slot.id);
+                return acc;
+            }, {});
+
             container.innerHTML = selectedCharacters.map(char => {
-                const settings = perCharacterSettings[char.id] || { composition: '', gaze: '', states: [], ageModifier: '' };
+                if (!perCharacterSettings[char.id]) {
+                    perCharacterSettings[char.id] = createDefaultPerCharacterSettings();
+                }
+                const settings = perCharacterSettings[char.id];
 
                 return `
                     <div class="accordion">
@@ -1988,6 +2284,36 @@
                                             <span>😠 怒り</span>
                                         </label>
                                     </div>
+                                </div>
+
+                                <!-- Costumes -->
+                                <div>
+                                    <label class="block text-gray-700 font-semibold mb-2 text-sm">👗 衣装スロット (Costume Slots)</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        ${COSTUME_SLOTS.map(slot => {
+                                            const selectedId = settings.costumeSlots?.[slot.id] || '';
+                                            const options = costumesBySlot[slot.id] || [];
+                                            const optionMarkup = options.length > 0
+                                                ? options.map(costume => `
+                                                    <option value="${costume.id}" ${parseInt(selectedId) === costume.id ? 'selected' : ''}>
+                                                        ${costume.name}
+                                                    </option>
+                                                `).join('')
+                                                : '<option value="" disabled>登録なし</option>';
+
+                                            return `
+                                                <div>
+                                                    <label class="text-xs font-semibold text-gray-500">${slot.label}</label>
+                                                    <select class="char-costume-slot w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                                                        data-char-id="${char.id}" data-slot="${slot.id}">
+                                                        <option value="">指定なし</option>
+                                                        ${optionMarkup}
+                                                    </select>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                    <p class="text-xs text-gray-400 mt-2">各スロットに登録した衣装から選択します。</p>
                                 </div>
 
                                 <!-- Age Modifier -->
@@ -2078,6 +2404,28 @@
                     }
                 });
             });
+
+            // Costume slot selectors
+            document.querySelectorAll('.char-costume-slot').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const charId = parseInt(e.target.dataset.charId);
+                    const slotId = parseInt(e.target.dataset.slot);
+                    if (perCharacterSettings[charId]) {
+                        const value = e.target.value ? parseInt(e.target.value) : null;
+                        if (!perCharacterSettings[charId].costumeSlots) {
+                            perCharacterSettings[charId].costumeSlots = {
+                                1: null,
+                                2: null,
+                                3: null,
+                                4: null,
+                                5: null
+                            };
+                        }
+                        perCharacterSettings[charId].costumeSlots[slotId] = value;
+                        updatePromptPreview();
+                    }
+                });
+            });
         }
 
         // ===== Situation Selection (V2) =====
@@ -2139,6 +2487,7 @@
         // ===== Generator Hub Init (V2) =====
         async function renderGeneratorHub() {
             await renderCharacterSelector();
+            await renderPerCharacterAdvancedSettings();
             await renderSituationSelector();
             await renderActionSelector();
             updatePromptPreview();
@@ -2227,6 +2576,16 @@
             return '';
         }
 
+        async function getCostumePromptById(costumeId) {
+            if (!costumeId) return '';
+            if (!costumeCache || costumeCache.length === 0) {
+                costumeCache = await getAllCostumes();
+            }
+            const costume = costumeCache.find(item => item.id === costumeId);
+            if (!costume) return '';
+            return costume.prompt || costume.name || '';
+        }
+
         // ===== Prompt Generation (V4) =====
         async function generatePrompt() {
             const format = document.getElementById('output-format')?.value || 'standard';
@@ -2270,6 +2629,18 @@
                             advancedParts.push(...settings.states);
                         }
                         if (settings.ageModifier) advancedParts.push(settings.ageModifier);
+                        if (settings.costumeSlots) {
+                            const costumeIds = Object.values(settings.costumeSlots).filter(id => id);
+                            if (costumeIds.length > 0) {
+                                const costumePrompts = await Promise.all(
+                                    costumeIds.map(id => getCostumePromptById(id))
+                                );
+                                const uniqueCostumes = [...new Set(costumePrompts.filter(p => p))];
+                                if (uniqueCostumes.length > 0) {
+                                    advancedParts.push(...uniqueCostumes);
+                                }
+                            }
+                        }
                     }
 
                     // V8: Add character physical attributes from database
@@ -2410,6 +2781,9 @@
         function updatePromptPreview() {
             generatePrompt().then(prompt => {
                 document.getElementById('prompt-preview').textContent = prompt || 'プロンプトがここに表示されます';
+                if (prompt) {
+                    scheduleHistorySave(prompt);
+                }
             });
         }
 
@@ -3000,6 +3374,97 @@
             updatePromptPreview();
         }
 
+        // ===== Costume Management (V10) =====
+        let editingCostumeId = null;
+
+        function getCostumeSlotLabel(slotId) {
+            const slot = COSTUME_SLOTS.find(item => item.id === parseInt(slotId));
+            return slot ? slot.label : `Slot ${slotId}`;
+        }
+
+        async function loadCostumeList() {
+            const costumes = await getAllCostumes();
+            const container = document.getElementById('costume-list');
+
+            if (costumes.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-gray-400 py-12">衣装が登録されていません</div>';
+                return;
+            }
+
+            container.innerHTML = costumes.map(costume => `
+                <div class="card p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-800">${costume.name}</h3>
+                            <p class="text-xs text-gray-400">${getCostumeSlotLabel(costume.slot)}</p>
+                        </div>
+                        <div class="space-x-2">
+                            <button class="edit-costume text-blue-500 hover:text-blue-700" data-id="${costume.id}">✏️</button>
+                            <button class="delete-costume text-red-500 hover:text-red-700" data-id="${costume.id}">🗑️</button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">${costume.prompt}</p>
+                </div>
+            `).join('');
+        }
+
+        function openCostumeModal(costumeId = null) {
+            editingCostumeId = costumeId;
+            const modal = document.getElementById('costume-modal');
+            const title = document.getElementById('costume-modal-title');
+
+            if (costumeId) {
+                title.textContent = '衣装編集';
+                getAllCostumes().then(costumes => {
+                    const costume = costumes.find(item => item.id === costumeId);
+                    if (costume) {
+                        document.getElementById('costume-id').value = costume.id;
+                        document.getElementById('costume-name').value = costume.name;
+                        document.getElementById('costume-slot').value = costume.slot;
+                        document.getElementById('costume-prompt').value = costume.prompt;
+                    }
+                });
+            } else {
+                title.textContent = '衣装登録';
+                document.getElementById('costume-form').reset();
+                document.getElementById('costume-id').value = '';
+                document.getElementById('costume-slot').value = '1';
+            }
+
+            modal.classList.add('show');
+        }
+
+        async function saveCostume(event) {
+            event.preventDefault();
+
+            const costumeData = {
+                name: document.getElementById('costume-name').value,
+                slot: parseInt(document.getElementById('costume-slot').value, 10),
+                prompt: document.getElementById('costume-prompt').value
+            };
+
+            if (editingCostumeId) {
+                costumeData.id = editingCostumeId;
+                await updateCostume(costumeData);
+            } else {
+                await addCostume(costumeData);
+            }
+
+            closeModal();
+            loadCostumeList();
+            renderPerCharacterAdvancedSettings();
+            updatePromptPreview();
+        }
+
+        async function deleteCostumeConfirm(id) {
+            if (!confirm('この衣装を削除しますか？')) return;
+
+            await deleteCostume(id);
+            loadCostumeList();
+            renderPerCharacterAdvancedSettings();
+            updatePromptPreview();
+        }
+
         // ===== Project Management (V3) =====
         async function loadProjectList() {
             const projects = await getAllProjects();
@@ -3555,17 +4020,21 @@
                 const props = await getAllProps();
                 const projects = await getAllProjects();
                 const pages = await getAllPages();
+                const costumes = await getAllCostumes();
+                const history = await getAllHistory();
                 const positivePreset = await getSetting('positivePreset', '');
                 const negativePreset = await getSetting('negativePreset', '');
 
                 const data = {
-                    version: 9,
+                    version: 10,
                     exportDate: new Date().toISOString(),
                     characters,
                     situations,
                     actions,
                     styles,
                     props,
+                    costumes,
+                    history,
                     projects,
                     pages,
                     settings: {
@@ -3628,6 +4097,8 @@
                     if (data.actions) message += `\n・アクション: ${data.actions.length}件`;
                     if (data.styles) message += `\n・アートスタイル: ${data.styles.length}件`;
                     if (data.props) message += `\n・小物: ${data.props.length}件`;
+                    if (data.costumes) message += `\n・衣装: ${data.costumes.length}件`;
+                    if (data.history) message += `\n・履歴: ${data.history.length}件`;
                     if (data.projects) message += `\n・プロジェクト: ${data.projects.length}件`;
                     if (data.pages) message += `\n・ページ: ${data.pages.length}件`;
                     message += '\n\n※既存データは上書きされます。よろしいですか？';
@@ -3667,6 +4138,18 @@
                     const props = await getAllProps();
                     for (const prop of props) {
                         clearOperations.push(deleteProp(prop.id));
+                    }
+
+                    // Costumes
+                    const costumes = await getAllCostumes();
+                    for (const costume of costumes) {
+                        clearOperations.push(deleteCostume(costume.id));
+                    }
+
+                    // History
+                    const historyEntries = await getAllHistory();
+                    for (const entry of historyEntries) {
+                        clearOperations.push(deleteHistory(entry.id));
                     }
 
                     // Projects
@@ -3713,6 +4196,20 @@
                         }
                     }
 
+                    if (data.costumes) {
+                        for (const costume of data.costumes) {
+                            delete costume.id;
+                            await addCostume(costume);
+                        }
+                    }
+
+                    if (data.history) {
+                        for (const entry of data.history) {
+                            delete entry.id;
+                            await addHistory(entry);
+                        }
+                    }
+
                     if (data.projects) {
                         for (const proj of data.projects) {
                             delete proj.id;
@@ -3741,8 +4238,10 @@
                     loadActionList();
                     loadStyleList();
                     loadPropsList();
+                    loadCostumeList();
                     renderGeneratorHub();
                     loadSettings();
+                    updateHistoryFilterButtons();
                 } catch (err) {
                     alert('❌ インポートに失敗しました: ' + err.message);
                 }
@@ -4064,6 +4563,20 @@
             // Props Form (V6)
             document.getElementById('props-form').addEventListener('submit', saveProp);
 
+            // Costume DB (V10)
+            document.getElementById('add-costume-btn').addEventListener('click', () => openCostumeModal());
+
+            document.getElementById('costume-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-costume')) {
+                    openCostumeModal(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('delete-costume')) {
+                    deleteCostumeConfirm(parseInt(e.target.dataset.id));
+                }
+            });
+
+            // Costume Form (V10)
+            document.getElementById('costume-form').addEventListener('submit', saveCostume);
+
             // Story Mode (V3)
             document.getElementById('add-project-btn').addEventListener('click', () => openProjectModal());
             document.getElementById('project-form').addEventListener('submit', saveProject);
@@ -4083,6 +4596,34 @@
             // Style presets
             document.querySelectorAll('.style-preset').forEach(checkbox => {
                 checkbox.addEventListener('change', updateProjectStyles);
+            });
+
+            // History (V10)
+            document.getElementById('history-filter-all').addEventListener('click', () => {
+                currentHistoryFilter = 'all';
+                updateHistoryFilterButtons();
+                loadHistoryList();
+            });
+            document.getElementById('history-filter-favorites').addEventListener('click', () => {
+                currentHistoryFilter = 'favorites';
+                updateHistoryFilterButtons();
+                loadHistoryList();
+            });
+            document.getElementById('clear-history-btn').addEventListener('click', async () => {
+                if (!confirm('履歴をすべて削除しますか？')) return;
+                await clearAllHistory();
+                loadHistoryList();
+            });
+            document.getElementById('history-list').addEventListener('click', (e) => {
+                if (e.target.classList.contains('history-copy')) {
+                    copyHistoryEntry(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('history-preview')) {
+                    previewHistoryEntry(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('history-favorite')) {
+                    toggleHistoryFavorite(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('history-delete')) {
+                    deleteHistoryEntry(parseInt(e.target.dataset.id));
+                }
             });
 
             // Pages container (delegation)
@@ -4167,12 +4708,14 @@
             // Initialize (V2)
             await renderGeneratorHub();
             loadSettings();
+            updateHistoryFilterButtons();
 
             // Initialize V6
             await loadStyleCheckboxes();
             await loadStyleList();
             await renderPropsSelector();
             await loadPropsList();
+            await loadCostumeList();
             updateColorMode(); // Initialize color picker visibility
         });
 
