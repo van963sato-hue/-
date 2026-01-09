@@ -15,6 +15,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- QR Code Library (V9) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
     <style>
         * {
             -webkit-tap-highlight-color: transparent;
@@ -725,6 +728,40 @@
                     </div>
 
                     <div id="props-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+
+                <!-- Data Management (V9) -->
+                <div class="card p-6 mt-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">💾 データ管理 (Data Management)</h2>
+
+                    <div class="space-y-4">
+                        <div class="border-t pt-4">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">📦 バックアップ＆復元</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <button id="export-data-btn" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
+                                    <span>⬇️</span> エクスポート (Backup)
+                                </button>
+                                <button id="import-data-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
+                                    <span>⬆️</span> インポート (Restore)
+                                </button>
+                            </div>
+                            <input type="file" id="import-file-input" accept=".json" class="hidden">
+                            <p class="text-sm text-gray-500 mt-2">※画像データを含むため、ファイルサイズが大きくなる場合があります</p>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">📱 QRコード生成</h3>
+                            <button id="generate-qr-btn" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 w-full md:w-auto">
+                                <span>📷</span> 現在のプロンプトをQRコード化
+                            </button>
+                            <div id="qr-code-container" class="mt-4 hidden">
+                                <div class="bg-white p-4 rounded-lg border-2 border-purple-300 inline-block">
+                                    <div id="qr-code"></div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">スマホで読み取ってプロンプトを取得</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1508,6 +1545,18 @@
                     pages.sort((a, b) => a.order - b.order);
                     resolve(pages);
                 };
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // V9: Get all pages
+        function getAllPages() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['pages'], 'readonly');
+                const store = transaction.objectStore('pages');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
                 request.onerror = () => reject(request.error);
             });
         }
@@ -3367,6 +3416,259 @@
             input.click();
         }
 
+        // ===== Data Management (V9) =====
+        async function exportAllData() {
+            try {
+                // Get all data from IndexedDB
+                const characters = await getAllCharacters();
+                const situations = await getAllSituations();
+                const actions = await getAllActions();
+                const styles = await getAllStyles();
+                const props = await getAllProps();
+                const projects = await getAllProjects();
+                const pages = await getAllPages();
+                const positivePreset = await getSetting('positivePreset', '');
+                const negativePreset = await getSetting('negativePreset', '');
+
+                const data = {
+                    version: 9,
+                    exportDate: new Date().toISOString(),
+                    characters,
+                    situations,
+                    actions,
+                    styles,
+                    props,
+                    projects,
+                    pages,
+                    settings: {
+                        positivePreset,
+                        negativePreset
+                    }
+                };
+
+                // Calculate approximate file size
+                const jsonStr = JSON.stringify(data, null, 2);
+                const sizeInMB = (new Blob([jsonStr]).size / 1024 / 1024).toFixed(2);
+
+                // Show warning if large
+                if (sizeInMB > 10) {
+                    if (!confirm(`ファイルサイズが ${sizeInMB}MB と大きいです。エクスポートを続行しますか？`)) {
+                        return;
+                    }
+                }
+
+                // Create download
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+                link.download = `linker_backup_${dateStr}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                alert(`✅ エクスポート完了 (${sizeInMB}MB)`);
+            } catch (err) {
+                alert('エクスポートに失敗しました: ' + err.message);
+            }
+        }
+
+        async function importAllData() {
+            const input = document.getElementById('import-file-input');
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+
+                    if (!data.version) {
+                        throw new Error('Invalid JSON format');
+                    }
+
+                    // Check file size
+                    const sizeInMB = (file.size / 1024 / 1024).toFixed(2);
+                    if (sizeInMB > 50) {
+                        alert(`⚠️ ファイルサイズが ${sizeInMB}MB と非常に大きいため、処理に時間がかかる可能性があります。`);
+                    }
+
+                    // Build confirmation message
+                    let message = '以下のデータをインポートします：\n';
+                    if (data.characters) message += `\n・キャラクター: ${data.characters.length}件`;
+                    if (data.situations) message += `\n・シチュエーション: ${data.situations.length}件`;
+                    if (data.actions) message += `\n・アクション: ${data.actions.length}件`;
+                    if (data.styles) message += `\n・アートスタイル: ${data.styles.length}件`;
+                    if (data.props) message += `\n・小物: ${data.props.length}件`;
+                    if (data.projects) message += `\n・プロジェクト: ${data.projects.length}件`;
+                    if (data.pages) message += `\n・ページ: ${data.pages.length}件`;
+                    message += '\n\n※既存データは上書きされます。よろしいですか？';
+
+                    if (!confirm(message)) {
+                        return;
+                    }
+
+                    // Clear all existing data
+                    const clearOperations = [];
+
+                    // Characters
+                    const characters = await getAllCharacters();
+                    for (const char of characters) {
+                        clearOperations.push(deleteCharacter(char.id));
+                    }
+
+                    // Situations
+                    const situations = await getAllSituations();
+                    for (const sit of situations) {
+                        clearOperations.push(deleteSituation(sit.id));
+                    }
+
+                    // Actions
+                    const actions = await getAllActions();
+                    for (const act of actions) {
+                        clearOperations.push(deleteAction(act.id));
+                    }
+
+                    // Styles
+                    const styles = await getAllStyles();
+                    for (const style of styles) {
+                        clearOperations.push(deleteStyle(style.id));
+                    }
+
+                    // Props
+                    const props = await getAllProps();
+                    for (const prop of props) {
+                        clearOperations.push(deleteProp(prop.id));
+                    }
+
+                    // Projects
+                    const projects = await getAllProjects();
+                    for (const proj of projects) {
+                        clearOperations.push(deleteProject(proj.id));
+                    }
+
+                    await Promise.all(clearOperations);
+
+                    // Import new data
+                    if (data.characters) {
+                        for (const char of data.characters) {
+                            delete char.id;
+                            await addCharacter(char);
+                        }
+                    }
+
+                    if (data.situations) {
+                        for (const sit of data.situations) {
+                            delete sit.id;
+                            await addSituation(sit);
+                        }
+                    }
+
+                    if (data.actions) {
+                        for (const act of data.actions) {
+                            delete act.id;
+                            await addAction(act);
+                        }
+                    }
+
+                    if (data.styles) {
+                        for (const style of data.styles) {
+                            delete style.id;
+                            await addStyle(style);
+                        }
+                    }
+
+                    if (data.props) {
+                        for (const prop of data.props) {
+                            delete prop.id;
+                            await addProp(prop);
+                        }
+                    }
+
+                    if (data.projects) {
+                        for (const proj of data.projects) {
+                            delete proj.id;
+                            await addProject(proj);
+                        }
+                    }
+
+                    if (data.pages) {
+                        for (const page of data.pages) {
+                            delete page.id;
+                            await addPage(page);
+                        }
+                    }
+
+                    // Import settings
+                    if (data.settings) {
+                        await saveSetting('positivePreset', data.settings.positivePreset || '');
+                        await saveSetting('negativePreset', data.settings.negativePreset || '');
+                    }
+
+                    alert('✅ インポートが完了しました');
+
+                    // Reload all lists
+                    loadCharacterList();
+                    loadSituationList();
+                    loadActionList();
+                    loadStyleList();
+                    loadPropsList();
+                    renderGeneratorHub();
+                    loadSettings();
+                } catch (err) {
+                    alert('❌ インポートに失敗しました: ' + err.message);
+                }
+
+                // Reset input
+                input.value = '';
+            };
+
+            input.click();
+        }
+
+        // V9: QR Code Generation
+        function generateQRCode() {
+            const container = document.getElementById('qr-code-container');
+            const qrDiv = document.getElementById('qr-code');
+
+            // Get current prompt
+            const promptText = document.getElementById('prompt-preview')?.textContent || '';
+
+            if (!promptText || promptText === 'プロンプトがここに表示されます') {
+                alert('⚠️ プロンプトが生成されていません。キャラクターを選択してプロンプトを作成してください。');
+                return;
+            }
+
+            // Clear previous QR code
+            qrDiv.innerHTML = '';
+
+            // Check if QRCode library is loaded
+            if (typeof QRCode === 'undefined') {
+                alert('❌ QRCodeライブラリが読み込まれていません。ページを再読み込みしてください。');
+                return;
+            }
+
+            try {
+                // Generate QR code
+                new QRCode(qrDiv, {
+                    text: promptText,
+                    width: 256,
+                    height: 256,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+
+                // Show container
+                container.classList.remove('hidden');
+
+                // Scroll to QR code
+                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } catch (err) {
+                alert('❌ QRコード生成に失敗しました: ' + err.message);
+            }
+        }
+
         // ===== Accordion Functions (V5) =====
         function toggleAccordion(header) {
             const content = header.nextElementSibling;
@@ -3717,6 +4019,11 @@
 
             // Settings
             document.getElementById('save-presets-btn').addEventListener('click', saveSettings);
+
+            // V9: Data Management
+            document.getElementById('export-data-btn').addEventListener('click', exportAllData);
+            document.getElementById('import-data-btn').addEventListener('click', importAllData);
+            document.getElementById('generate-qr-btn').addEventListener('click', generateQRCode);
 
             // Modal close
             document.querySelectorAll('.close-modal').forEach(btn => {
