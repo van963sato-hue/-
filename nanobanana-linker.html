@@ -1148,7 +1148,7 @@
     <script>
         // ===== IndexedDB Setup =====
         const DB_NAME = 'NanobananaLinkerDB';
-        const DB_VERSION = 6; // V8: Extended Character fields (age, height, bodyType)
+        const DB_VERSION = 7; // V10: Added Costumes and History stores
         let db;
 
         function initDB() {
@@ -1206,6 +1206,20 @@
                     if (!db.objectStoreNames.contains('props')) {
                         const propStore = db.createObjectStore('props', { keyPath: 'id', autoIncrement: true });
                         propStore.createIndex('name', 'name', { unique: false });
+                    }
+
+                    // Costumes Store (V10)
+                    if (!db.objectStoreNames.contains('costumes')) {
+                        const costumeStore = db.createObjectStore('costumes', { keyPath: 'id', autoIncrement: true });
+                        costumeStore.createIndex('name', 'name', { unique: false });
+                        costumeStore.createIndex('slot', 'slot', { unique: false });
+                    }
+
+                    // History Store (V10)
+                    if (!db.objectStoreNames.contains('history')) {
+                        const historyStore = db.createObjectStore('history', { keyPath: 'id', autoIncrement: true });
+                        historyStore.createIndex('timestamp', 'timestamp', { unique: false });
+                        historyStore.createIndex('favorite', 'favorite', { unique: false });
                     }
 
                     // Settings Store
@@ -1437,6 +1451,120 @@
                 const request = store.getAll();
 
                 request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ===== Costume Operations (V10) =====
+        function addCostume(costume) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['costumes'], 'readwrite');
+                const store = transaction.objectStore('costumes');
+                const request = store.add(costume);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateCostume(costume) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['costumes'], 'readwrite');
+                const store = transaction.objectStore('costumes');
+                const request = store.put(costume);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteCostume(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['costumes'], 'readwrite');
+                const store = transaction.objectStore('costumes');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllCostumes() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['costumes'], 'readonly');
+                const store = transaction.objectStore('costumes');
+                const request = store.getAll();
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getCostumesBySlot(slot) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['costumes'], 'readonly');
+                const store = transaction.objectStore('costumes');
+                const index = store.index('slot');
+                const request = index.getAll(slot);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // ===== History Operations (V10) =====
+        function addHistory(historyEntry) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['history'], 'readwrite');
+                const store = transaction.objectStore('history');
+                historyEntry.timestamp = Date.now();
+                historyEntry.favorite = false;
+                const request = store.add(historyEntry);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function updateHistory(historyEntry) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['history'], 'readwrite');
+                const store = transaction.objectStore('history');
+                const request = store.put(historyEntry);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function deleteHistory(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['history'], 'readwrite');
+                const store = transaction.objectStore('history');
+                const request = store.delete(id);
+
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        function getAllHistory() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['history'], 'readonly');
+                const store = transaction.objectStore('history');
+                const index = store.index('timestamp');
+                const request = index.openCursor(null, 'prev'); // Newest first
+                const results = [];
+
+                request.onsuccess = (e) => {
+                    const cursor = e.target.result;
+                    if (cursor) {
+                        results.push(cursor.value);
+                        cursor.continue();
+                    } else {
+                        resolve(results);
+                    }
+                };
                 request.onerror = () => reject(request.error);
             });
         }
